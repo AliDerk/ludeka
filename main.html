@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ludekard | Pony Artist</title>
+    <style>
+        /* Основные стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0a0a14;
+            color: #f0f0f5;
+            line-height: 1.6;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Фоновое изображение (локальный файл) */
+        #background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('back.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        /* Языковой переключатель */
+        .language-switcher {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .language-btn {
+            background: rgba(60, 55, 100, 0.7);
+            color: #d0c6ff;
+            border: 1px solid #4a4580;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .language-btn:hover {
+            background: #6a5acd;
+            color: white;
+        }
+
+        .language-btn.active {
+            background: #7b68ee;
+            color: white;
+        }
+
+        .flag-icon {
+            width: 20px;
+            height: 15px;
+            border-radius: 2px;
+        }
+
+        /* Навигация */
+        nav {
+            background-color: rgba(20, 20, 35, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 2px solid #6a5acd;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #9d7cff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #d0c6ff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+            background-color: rgba(109, 90, 205, 0.2);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: #9d7cff;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, rgba(40, 35, 70, 0.95), rgba(25, 22, 45, 0.95));
+            padding: 3rem;
+            border-radius: 16px;
+            text-align: center;
+            border: 2px solid #6a5acd;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            max-width: 500px;
+            width: 90%;
+            animation: modalAppear 0.5s ease-out;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal h3 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #9d7cff;
+            background: linear-gradient(90deg, #9d7cff, #6a5acd);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .modal p {
+            font-size: 1.2rem;
+            color: #c5b3ff;
+            margin-bottom: 2rem;
+        }
+
+        .modal-close {
+            background-color: #7b68ee;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background-color: #6a5acd;
+            transform: translateY(-2px);
+        }
+
+        /* Основной контент */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem 2rem;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            padding: 2.5rem;
+            background-color: rgba(20, 20, 35, 0.85);
+            border-radius: 12px;
+            border: 1px solid #2a2a4a;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1, h2, h3 {
+            color: #b19cff;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(90deg, #9d7cff, #6a5acd);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            border-bottom: 2px solid #6a5acd;
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: #d0c6ff;
+        }
+
+        /* Герой-секция */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(rgba(30, 25, 60, 0.9), rgba(15, 12, 35, 0.9));
+            border-radius: 16px;
+            margin-top: 1rem;
+        }
+
+        .tagline {
+            font-size: 1.3rem;
+            color: #c5b3ff;
+            max-width: 700px;
+            margin: 1.5rem auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: 2px solid transparent;
+        }
+
+        .btn-primary {
+            background-color: #7b68ee;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #6a5acd;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(106, 90, 205, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: #b19cff;
+            border-color: #7b68ee;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(123, 104, 238, 0.1);
+            transform: translateY(-3px);
+        }
+
+        /* Галерея */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .art-item {
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            background-color: rgba(40, 35, 70, 0.5);
+            border: 1px solid #3a3560;
+        }
+
+        .art-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .art-item img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .art-info {
+            padding: 1rem;
+        }
+
+        /* Фильтры галереи */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.2rem;
+            background-color: rgba(60, 55, 100, 0.5);
+            border: 1px solid #4a4580;
+            color: #d0c6ff;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: #6a5acd;
+            color: white;
+        }
+
+        /* Комиссии */
+        .pricing {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .price-card {
+            background: linear-gradient(145deg, rgba(40, 35, 70, 0.8), rgba(25, 22, 45, 0.8));
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid #4a4580;
+        }
+
+        .price {
+            font-size: 2.2rem;
+            color: #9d7cff;
+            margin: 1rem 0;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-open {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #2ecc71; #2ecc71 #cc2e2e  
+        }
+
+        /* Форма */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #c5b3ff;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.9rem;
+            background-color: rgba(30, 27, 50, 0.8);
+            border: 1px solid #4a4580;
+            border-radius: 8px;
+            color: #f0f0f5;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* Магазин */
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .product-card {
+            background-color: rgba(40, 35, 70, 0.6);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #3a3560;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Подвал */
+        footer {
+            background-color: rgba(15, 12, 30, 0.95);
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 4rem;
+            border-top: 2px solid #6a5acd;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            color: #b19cff;
+            text-decoration: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            background-color: rgba(60, 55, 100, 0.5);
+            border: 1px solid #4a4580;
+            transition: all 0.3s;
+        }
+
+        .social-link:hover {
+            background-color: #6a5acd;
+            color: white;
+        }
+
+        .copyright {
+            color: #888;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: rgba(20, 20, 35, 0.98);
+                flex-direction: column;
+                padding: 1rem 0;
+                gap: 0;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links a {
+                padding: 1rem;
+                border-radius: 0;
+            }
+            
+            .language-switcher {
+                justify-content: center;
+                padding: 1rem;
+                border-top: 1px solid #2a2a4a;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .container {
+                padding: 5rem 1rem 1rem;
+            }
+            
+            section {
+                padding: 1.5rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                text-align: center;
+            }
+            
+            .modal-content {
+                padding: 2rem;
+            }
+            
+            .modal h3 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Фоновое изображение (локальный файл) -->
+    <div id="background-image"></div>
+
+    <!-- Модальное окно "Спасибо" -->
+    <div id="thankYouModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Спасибо! ✨</h3>
+            <p id="modalMessage">Ваша заявка отправлена успешно. Я свяжусь с вами в течение 1-2 дней.</p>
+            <button class="modal-close" onclick="closeModal()">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Навигация с языковым переключателем -->
+    <nav>
+        <a href="#" class="logo">Ludekard</a>
+        <button class="mobile-menu-btn" id="menuBtn">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="#home" data-i18n="nav.home">Главная</a>
+            <a href="#portfolio" data-i18n="nav.portfolio">Портфолио</a>
+            <a href="#commissions" data-i18n="nav.commissions">Комиссии</a>
+<!--            <a href="#shop" data-i18n="nav.shop">Магазин</a> -->
+            <a href="#about" data-i18n="nav.about">Обо мне</a>
+            <a href="#contact" data-i18n="nav.contact">Контакты</a>
+            
+            <div class="language-switcher">
+                <button class="language-btn active" data-lang="ru">
+                    Русский
+                </button>
+               <button class="language-btn" data-lang="en"> 
+                English </button>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <div class="container">
+        <!-- Герой секция -->
+        <section id="home" class="hero">
+            <h1 data-i18n="hero.title">  Ludekard</h1>
+                    <div class="art-item" data-category="pony finished">
+                    <img src="head.png" alt="Lu">
+            <p class="tagline" data-i18n="hero.tagline">Художник, что рисует пони.</p>
+            <div class="cta-buttons">
+                <a href="#commissions" class="btn btn-primary" data-i18n="hero.order">Заказать арт</a>
+                <a href="#portfolio" class="btn btn-secondary" data-i18n="hero.gallery">Смотреть галерею</a>
+<!--                <a href="#shop" class="btn btn-secondary" data-i18n="hero.shop">Магазин принтов</a> -->
+            </div>
+        </section>
+
+        <!-- Портфолио -->
+        <section id="portfolio">
+            <h2 data-i18n="portfolio.title">Галерея работ</h2>
+            <p data-i18n="portfolio.subtitle">Последние работы и любимые проекты. Используйте фильтры для навигации.</p>
+            
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all" data-i18n="portfolio.filters.all">Все работы</button>
+                <button class="filter-btn" data-filter="pony" data-i18n="portfolio.filters.pony">Пони</button>
+                <button class="filter-btn" data-filter="oc" data-i18n="portfolio.filters.oc">Оригинальные персонажи</button>
+                <button class="filter-btn" data-filter="sketch" data-i18n="portfolio.filters.sketch">Скетчи</button>
+                <button class="filter-btn" data-filter="finished" data-i18n="portfolio.filters.finished">Законченные работы</button>
+            </div>
+            
+            <div class="gallery">
+                <div class="art-item" data-category="pony finished">
+                    <img src="https://derpicdn.net/img/view/2025/12/7/3724614__safe_artist-colon-lu-dot-de_princess+luna_alicorn_pony_g4_blushing_drink_energy+drink_monster+energy_simple+background_solo_white+background.png" alt="Artwork 1">
+                    <div class="art-info">
+                        <h3 data-i18n="portfolio.art1.title">Лу</h3>
+                        <p data-i18n="portfolio.art1.desc">Цифровая живопись, 2025</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Комиссии -->
+        <section id="commissions">
+            <h2 data-i18n="commissions.title">Заказать арт</h2>
+            <div class="status status-open" data-i18n="commissions.status">✓ Комиссии открыты</div>
+            
+            <div class="pricing">
+                <div class="price-card">
+                    <h3 data-i18n="commissions.sketch.title">Скетч</h3>
+                    <p data-i18n="commissions.sketch.desc">Быстрый набросок, работа с позой и композицией</p>
+                    <div class="price">$4</div>
+                    <ul>
+                        <li data-i18n="commissions.sketch.list1">Черно-белый или простой цвет</li>
+                        <li data-i18n="commissions.sketch.list2">До 3 правок</li>
+                        <li data-i18n="commissions.sketch.list3">Срок: 3-7 дней</li>
+                    </ul>
+                </div>
+                
+                <div class="price-card">
+                    <h3 data-i18n="commissions.color.title">Полноцветный арт</h3>
+                    <p data-i18n="commissions.color.desc">Детализированная полноцветная иллюстрация</p>
+                    <div class="price">$24+</div>
+                    <ul>
+                        <li data-i18n="commissions.color.list1">Полная проработка деталей</li>
+                        <li data-i18n="commissions.color.list2">До 3 правок</li>
+                        <li data-i18n="commissions.color.list3">Срок: 7-14 дней</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 2.5rem;" data-i18n="commissions.form.title">Форма запроса</h3>
+            <form id="commissionForm" action="https://formspree.io/f/maqyvozl" method="POST">
+                <!-- Скрытые поля для настройки -->
+                <input type="hidden" name="_subject" value="Новая заявка от Ludekard">
+                <input type="hidden" name="_language" value="ru">
+                
+                <div class="form-group">
+                    <label for="name" data-i18n="commissions.form.name">Имя / Псевдоним</label>
+                    <input type="text" id="name" name="name" required 
+                           data-i18n-placeholder="commissions.form.namePlaceholder"
+                           placeholder="Ваше имя">
+                </div>
+                
+                <div class="form-group">
+                    <label for="short_description" data-i18n="commissions.form.shortDescription">
+                        Краткое описание заказа
+                    </label>
+                    <input type="text" id="short_description" name="short_description" required
+                           data-i18n-placeholder="commissions.form.shortDescriptionPlaceholder"
+                           placeholder="Опишите вкратце, что вы хотите">
+                </div>
+
+                <div class="form-group">
+                    <label for="email" data-i18n="commissions.form.email">Email для связи</label>
+                    <input type="email" id="email" name="email" required
+                           data-i18n-placeholder="commissions.form.emailPlaceholder"
+                           placeholder="email@example.com">
+                </div>
+                
+                <!-- Защита от спама -->
+                <div style="display: none;">
+                    <input type="text" name="_gotcha">
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;" data-i18n="commissions.form.submit">
+                    Отправить запрос
+                </button>
+            </form>
+        </section>
+
+<!--        
+        <section id="shop">
+            <h2 data-i18n="shop.title">Магазин</h2>
+            <p data-i18n="shop.subtitle">Принты, стикеры и другая продукция с моими работами.</p>
+            
+            <div class="products">
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Product 1" style="width:100%; height:200px; object-fit:cover;">
+                    <div class="art-info">
+                        <h3 data-i18n="shop.product1.title">Принт "Твайлайт"</h3>
+                        <p data-i18n="shop.product1.desc">Качественная печать на матовой бумаге</p>
+                        <p><strong>$25</strong></p>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Product 2" style="width:100%; height:200px; object-fit:cover;">
+                    <div class="art-info">
+                        <h3 data-i18n="shop.product2.title">Набор стикеров</h3>
+                        <p data-i18n="shop.product2.desc">6 виниловых стикеров с пони</p>
+                        <p><strong>$15</strong></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+-->
+        <!-- Обо мне -->
+        <section id="about">
+            <h2 data-i18n="about.title">Обо мне</h2>
+            <p data-i18n="about.p1">Привет! Я Ludekard, цифровой художник с более чем 7-летним опытом. Специализируюсь на фан-арте вселенной My Little Pony и создании оригинальных персонажей.</p>
+            <p data-i18n="about.p2">Люблю работать в стиле, сочетающем элементы аниме и западной мультипликации. Вдохновляюсь классическим искусством, природой и, конечно же, магией дружбы!</p>
+            <p data-i18n="about.p3">Инструменты: Photoshop, Clip Studio Paint, Procreate.</p>
+            
+        </section>
+
+        <!-- Контакты -->
+        <section id="contact">
+            <h2 data-i18n="contact.title">Контакты и соцсети</h2>
+            <p data-i18n="contact.subtitle">Свяжитесь со мной или подпишитесь для получения обновлений!</p>
+            
+            <div class="social-links">
+                <a href="https://x.com/ludekard" class="social-link" data-i18n="contact.twitter">Twitter</a>
+                <a href="https://t.me/+V5PqaqW-v4M3ODky" class="social-link" data-i18n="contact.telegram">Telegram</a>
+                <a href="https://boosty.to/aliderk" class="social-link" data-i18n="contact.boosty">Boosty</a>
+            </div>
+            
+            <p style="margin-top: 2rem;"><span data-i18n="contact.email">Для деловых предложений:</span> <strong>aliluspam@gmail.com</strong></p>
+        </section>
+    </div>
+
+    <!-- Подвал -->
+    <footer>
+        <p class="logo" style="font-size: 1.8rem; margin-bottom: 1rem;">Ludekard</p>
+        <p data-i18n="footer.tagline">Цифровой художник | Фан-арт пони | Оригинальные персонажи</p>
+        
+        <div class="social-links">
+            <a href="#" class="social-link" data-i18n="footer.boosty">Подписаться на Boosty</a>
+            <a href="#commissions" class="social-link" data-i18n="footer.order">Заказать комиссию</a>
+        </div>
+        
+        <p class="copyright" data-i18n="footer.copyright">© 2025 Ludekard. Все права на изображения защищены.</p>
+    </footer>
+
+    <script>
+        // Тексты для перевода
+        const translations = {
+            ru: {
+                // Навигация
+                "nav.home": "Главная",
+                "nav.portfolio": "Портфолио",
+                "nav.commissions": "Комиссии",
+                "nav.shop": "Магазин",
+                "nav.about": "Обо мне",
+                "nav.contact": "Контакты",
+                
+                // Герой
+                "hero.title": "Ludekard",
+                "hero.tagline": "Художник, что рисует пони.",
+                "hero.order": "Заказать арт",
+                "hero.gallery": "Смотреть галерею",
+                "hero.shop": "Магазин принтов",
+                
+                // Портфолио
+                "portfolio.title": "Галерея работ",
+                "portfolio.subtitle": "Последние работы и любимые проекты. Используйте фильтры для навигации.",
+                "portfolio.filters.all": "Все работы",
+                "portfolio.filters.pony": "Пони",
+                "portfolio.filters.oc": "Оригинальные персонажи",
+                "portfolio.filters.sketch": "Скетчи",
+                "portfolio.filters.finished": "Законченные работы",
+                "portfolio.art1.title": "Лу",
+                "portfolio.art1.desc": "Цифровая живопись, 2025",
+                "portfolio.art2.title": "Лунная песня",
+                "portfolio.art2.desc": "Мой оригинальный персонаж",
+                "portfolio.art3.title": "Радуга Дэш (скетч)",
+                "portfolio.art3.desc": "Быстрый набросок",
+                "portfolio.art4.title": "Эпплджек на ферме",
+                "portfolio.art4.desc": "Детализированная иллюстрация",
+                
+                // Комиссии
+                "commissions.title": "Заказать арт",
+                "commissions.status": "✓ Комиссии открыты", // ✓ Комиссии открыты 🛇 Комиссии закрыты 
+                "commissions.sketch.title": "Скетч",
+                "commissions.sketch.desc": "Быстрый набросок, работа с позой и композицией",
+                "commissions.sketch.list1": "Черно-белый или простой цвет",
+                "commissions.sketch.list2": "До 3 правок",
+                "commissions.sketch.list3": "Срок: 3-5 дней",
+                "commissions.color.title": "Полноцветный арт",
+                "commissions.color.desc": "Детализированная полноцветная иллюстрация",
+                "commissions.color.list1": "Полная проработка деталей",
+                "commissions.color.list2": "До 3 правок",
+                "commissions.color.list3": "Срок: 7-14 дней",
+                "commissions.scene.title": "Иллюстрация с фоном",
+                "commissions.scene.desc": "Сложная сцена с проработанным окружением",
+                "commissions.scene.list1": "Персонаж в окружении",
+                "commissions.scene.list2": "Сложное освещение",
+                "commissions.scene.list3": "Срок: 14-21 день",
+                "commissions.form.title": "Форма запроса",
+                "commissions.form.name": "Имя / Псевдоним",
+                "commissions.form.namePlaceholder": "Ваше имя",
+                "commissions.form.shortDescription": "Краткое описание заказа",
+                "commissions.form.shortDescriptionPlaceholder": "Опишите вкратце, что вы хотите",
+                "commissions.form.email": "Email для связи",
+                "commissions.form.emailPlaceholder": "email@example.com",
+                "commissions.form.submit": "Отправить запрос",
+                
+                // Модальное окно
+                "modal.title": "Спасибо! ✨",
+                "modal.message": "Ваша заявка отправлена успешно. Я свяжусь с вами в течение 1-2 дней.",
+                "modal.close": "Закрыть",
+                
+                // Магазин
+                "shop.title": "Магазин",
+                "shop.subtitle": "Принты, стикеры и другая продукция с моими работами.",
+                "shop.product1.title": "Принт \"Твайлайт\"",
+                "shop.product1.desc": "Качественная печать на матовой бумаге",
+                "shop.product2.title": "Набор стикеров",
+                "shop.product2.desc": "6 виниловых стикеров с пони",
+                
+                // Обо мне
+                "about.title": "Обо мне",
+                "about.p1": "Привет! Я Ludekard, цифровой художник с более чем 7-летним опытом. Специализируюсь на фан-арте вселенной My Little Pony и создании оригинальных персонажей.",
+                "about.p2": "Люблю работать в стиле, сочетающем элементы аниме и западной мультипликации. Вдохновляюсь классическим искусством, природой и, конечно же, магией дружбы!",
+                "about.p3": "Инструменты: Krita, DaVinci Resolve.",
+
+                
+                // Контакты
+                "contact.title": "Контакты и соцсети",
+                "contact.subtitle": "Свяжитесь со мной или подпишитесь для получения обновлений!",
+                "contact.twitter": "Twitter",
+                "contact.telegram": "Telegram",
+                "contact.vk": "VK",
+                "contact.boosty": "Boosty",
+                "contact.youtube": "YouTube",
+                "contact.email": "Для деловых предложений:",
+                
+                // Подвал
+                "footer.tagline": "Цифровой художник | Фан-арт пони | Оригинальные персонажи",
+                "footer.boosty": "Подписаться на Boosty",
+                "footer.order": "Заказать комиссию",
+                "footer.copyright": "© 2025 Ludekard. Все права на изображения защищены."
+            },
+            
+            en: {
+                // Navigation
+                "nav.home": "Home",
+                "nav.portfolio": "Portfolio",
+                "nav.commissions": "Commissions",
+                "nav.shop": "Shop",
+                "nav.about": "About",
+                "nav.contact": "Contact",
+                
+                // Hero
+                "hero.title": "Ludekard",
+                "hero.tagline": "A simple artist who draws ponies.",
+                "hero.order": "Order Art",
+                "hero.gallery": "View Gallery",
+                "hero.shop": "Print Shop",
+                
+                // Portfolio
+                "portfolio.title": "Art Gallery",
+                "portfolio.subtitle": "Latest works and favorite projects. Use filters to navigate.",
+                "portfolio.filters.all": "All Works",
+                "portfolio.filters.pony": "Ponies",
+                "portfolio.filters.oc": "Original Characters",
+                "portfolio.filters.sketch": "Sketches",
+                "portfolio.filters.finished": "Finished Works",
+                "portfolio.art1.title": "Lu",
+                "portfolio.art1.desc": "Digital painting, 2025",
+                "portfolio.art2.title": "Moon Song",
+                "portfolio.art2.desc": "My original character",
+                "portfolio.art3.title": "Rainbow Dash (sketch)",
+                "portfolio.art3.desc": "Quick sketch",
+                "portfolio.art4.title": "Applejack on the farm",
+                "portfolio.art4.desc": "Detailed illustration",
+                
+                // Commissions
+                "commissions.title": "Order Art",
+               "commissions.status": "✓ Commissions Open",// ✓ Commissions Open 🛇 Commissions Closed 
+                "commissions.sketch.title": "Sketch",
+                "commissions.sketch.desc": "Quick sketch, working with pose and composition",
+                "commissions.sketch.list1": "Black and white or simple color",
+                "commissions.sketch.list2": "Up to 3 revisions",
+                "commissions.sketch.list3": "Time: 3-5 days",
+                "commissions.color.title": "Full Color Art",
+                "commissions.color.desc": "Detailed full-color illustration",
+                "commissions.color.list1": "Full detail work",
+                "commissions.color.list2": "Up to 3 revisions",
+                "commissions.color.list3": "Time: 7-14 days",
+                "commissions.scene.title": "Illustration with Background",
+                "commissions.scene.desc": "Complex scene with detailed environment",
+                "commissions.scene.list1": "Character in environment",
+                "commissions.scene.list2": "Complex lighting",
+                "commissions.scene.list3": "Time: 14-21 days",
+                "commissions.form.title": "Request Form",
+                "commissions.form.name": "Name / Nickname",
+                "commissions.form.namePlaceholder": "Your name",
+                "commissions.form.shortDescription": "Short order description",
+                "commissions.form.shortDescriptionPlaceholder": "Briefly describe what you want",
+                "commissions.form.email": "Contact Email",
+                "commissions.form.emailPlaceholder": "email@example.com",
+                "commissions.form.submit": "Send Request",
+                
+                // Modal
+                "modal.title": "Thank You! ✨",
+                "modal.message": "Your request has been sent successfully. I will contact you within 1-2 days.",
+                "modal.close": "Close",
+                
+                // Shop
+                "shop.title": "Shop",
+                "shop.subtitle": "Prints, stickers and other products with my artwork.",
+                "shop.product1.title": "Print \"Twilight\"",
+                "shop.product1.desc": "Quality print on matte paper",
+                "shop.product2.title": "Sticker Set",
+                "shop.product2.desc": "6 vinyl stickers with ponies",
+                
+                // About
+                "about.title": "About Me",
+                "about.p1": "Hello! I'm Ludekard, a digital artist with over 7 years of experience. I specialize in My Little Pony fan art and creating original characters.",
+                "about.p2": "I love working in a style that combines anime and western animation elements. Inspired by classical art, nature and, of course, the magic of friendship!",
+                "about.p3": "Tools: Krita, DaVinci Resolve.",
+
+                
+                // Contacts
+                "contact.title": "Contacts & Social Media",
+                "contact.subtitle": "Contact me or subscribe for updates!",
+                "contact.twitter": "Twitter",
+                "contact.telegram": "Telegram",
+                "contact.vk": "VK",
+                "contact.boosty": "Boosty",
+                "contact.youtube": "YouTube",
+                "contact.email": "For business inquiries:",
+                
+                // Footer
+                "footer.tagline": "Digital Artist | Pony Fan Art | Original Characters",
+                "footer.boosty": "Subscribe on Boosty",
+                "footer.order": "Order Commission",
+                "footer.copyright": "© 2025 Ludekard. All image rights reserved."
+            }
+        };
+
+        // Мобильное меню
+        const menuBtn = document.getElementById('menuBtn');
+        const navLinks = document.getElementById('navLinks');
+        
+        menuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+        
+        // Фильтрация галереи
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const artItems = document.querySelectorAll('.art-item');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                const filterValue = button.getAttribute('data-filter');
+                
+                artItems.forEach(item => {
+                    if (filterValue === 'all' || item.getAttribute('data-category').includes(filterValue)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Функции для модального окна
+        function showModal() {
+            const modal = document.getElementById('thankYouModal');
+            modal.style.display = 'flex';
+            
+            // Обновляем текст модального окна в зависимости от текущего языка
+            updateModalText();
+            
+            // Автоматически закрываем через 5 секунд
+            setTimeout(() => {
+                closeModal();
+            }, 5000);
+        }
+        
+        function closeModal() {
+            const modal = document.getElementById('thankYouModal');
+            modal.style.display = 'none';
+        }
+        
+        function updateModalText() {
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalClose = document.querySelector('.modal-close');
+            
+            if (modalTitle && modalMessage && modalClose) {
+                modalTitle.textContent = translations[currentLang]["modal.title"];
+                modalMessage.textContent = translations[currentLang]["modal.message"];
+                modalClose.textContent = translations[currentLang]["modal.close"];
+            }
+        }
+        
+        // Обработка формы
+        const form = document.getElementById('commissionForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            
+            try {
+                // Отправляем данные на Formspree
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    // Показываем модальное окно с благодарностью
+                    showModal();
+                    // Очищаем форму
+                    form.reset();
+                } else {
+                    // Если ошибка от Formspree
+                    const currentLang = document.querySelector('.language-btn.active').getAttribute('data-lang');
+                    const errorMessage = currentLang === 'ru' ? 
+                        'Ошибка при отправке. Пожалуйста, попробуйте еще раз.' :
+                        'Error sending request. Please try again.';
+                    alert(errorMessage);
+                }
+            } catch (error) {
+                // Если ошибка сети
+                const currentLang = document.querySelector('.language-btn.active').getAttribute('data-lang');
+                const errorMessage = currentLang === 'ru' ? 
+                    'Ошибка сети. Пожалуйста, проверьте соединение.' :
+                    'Network error. Please check your connection.';
+                alert(errorMessage);
+            }
+        });
+        
+        // Плавная прокрутка
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    navLinks.classList.remove('active');
+                    
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Переключение языка
+        let currentLang = 'ru'; // Язык по умолчанию
+        
+        function changeLanguage(lang) {
+            currentLang = lang;
+            
+            // Обновляем активную кнопку языка
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Обновляем текст страницы
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // Обновляем placeholder у полей формы
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                if (translations[lang][key]) {
+                    element.setAttribute('placeholder', translations[lang][key]);
+                }
+            });
+            
+            // Обновляем опции в select (если они есть)
+            document.querySelectorAll('option[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // Обновляем текст в модальном окне
+            updateModalText();
+            
+            // Обновляем атрибут lang у html
+            document.documentElement.lang = lang;
+            
+            // Плавное изменение контента
+            document.body.style.opacity = '0.7';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        }
+        
+        // Обработчики для кнопок переключения языка
+        document.querySelectorAll('.language-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const lang = button.getAttribute('data-lang');
+                changeLanguage(lang);
+                
+                // Сохраняем выбор в localStorage
+                localStorage.setItem('preferredLanguage', lang);
+            });
+        });
+        
+        // При загрузке страницы проверяем сохраненный язык
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferredLanguage') || 'ru';
+            changeLanguage(savedLang);
+        });
+        
+        // Если файл back.png не найден, показываем сообщение в консоли
+        window.addEventListener('load', () => {
+            const bg = document.getElementById('background-image');
+            const img = new Image();
+            img.src = 'back.png';
+            img.onerror = () => {
+                console.log('Файл back.png не найден. Пожалуйста, поместите файл с фоновым изображением в ту же папку, что и сайт.');
+                // Используем фоновое изображение по умолчанию
+                bg.style.backgroundImage = 'url("https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80")';
+            };
+        });
+        
+        // Закрытие модального окна при клике вне его
+        window.addEventListener('click', (event) => {
+            const modal = document.getElementById('thankYouModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
