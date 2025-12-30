@@ -192,8 +192,9 @@ class QueueManager {
     switch (this.currentFilter) {
         case 'all':
             // Только активные (без done)
-            this.filteredData =  this.data
-                    .filter(item => item.status !== 'done');
+            this.filteredData = this.data
+                    .filter(item => item.status !== 'done')
+                    .slice(0, 5);
             break;
             case 'working':
                 this.filteredData = this.data.filter(item => item.status === 'working');
