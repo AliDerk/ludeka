@@ -395,7 +395,7 @@
 
         .status-open {
             background-color: rgba(46, 204, 113, 0.2);
-            color: #2ecc71; #2ecc71 #cc2e2e  
+            color: #2ecc71;
         }
 
         /* Форма */
@@ -437,6 +437,376 @@
 
         .product-card:hover {
             transform: translateY(-5px);
+        }
+
+        /* Стили для очереди заказов */
+        .queue-section {
+            background-color: rgba(20, 20, 35, 0.85);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 4rem;
+            border: 1px solid #2a2a4a;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .queue-section h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .queue-subtitle {
+            color: #c5b3ff;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .queue-filters {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .queue-filter-btn {
+            padding: 0.6rem 1.2rem;
+            background-color: rgba(60, 55, 100, 0.5);
+            border: 1px solid #4a4580;
+            color: #d0c6ff;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .queue-filter-btn:hover {
+            background-color: rgba(106, 90, 205, 0.3);
+            border-color: #6a5acd;
+        }
+
+        .queue-filter-btn.active {
+            background-color: #6a5acd;
+            color: white;
+            border-color: #6a5acd;
+        }
+
+        .queue-info {
+            background-color: rgba(40, 35, 70, 0.6);
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            color: #b19cff;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .queue-info #queueCount {
+            font-weight: bold;
+            color: #9d7cff;
+            font-size: 1.2rem;
+        }
+
+        .queue-update-time {
+            margin-left: auto;
+            color: #888;
+        }
+
+        #lastUpdated {
+            font-family: monospace;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .queue-container {
+            min-height: 300px;
+            position: relative;
+        }
+
+        .queue-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(106, 90, 205, 0.2);
+            border-top: 4px solid #6a5acd;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .queue-loading p {
+            color: #b19cff;
+            font-size: 1.1rem;
+        }
+
+        .queue-empty, .queue-error {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .empty-icon, .error-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .queue-empty p, .queue-error p {
+            color: #c5b3ff;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .error-details {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .queue-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .queue-card {
+            background: linear-gradient(145deg, rgba(40, 35, 70, 0.8), rgba(25, 22, 45, 0.8));
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #3a3560;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .queue-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: #6a5acd;
+        }
+
+        .queue-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+        }
+
+        .queue-card.working::before {
+            background: linear-gradient(to bottom, #ff9900, #ffcc00);
+        }
+
+        .queue-card.waiting::before {
+            background: linear-gradient(to bottom, #3498db, #2980b9);
+        }
+
+        .queue-card.done::before {
+            background: linear-gradient(to bottom, #2ecc71, #27ae60);
+        }
+
+        .queue-card.upcoming::before {
+            background: linear-gradient(to bottom, #9b59b6, #8e44ad);
+        }
+
+        .queue-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .queue-position {
+            background-color: rgba(106, 90, 205, 0.2);
+            color: #9d7cff;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 2px solid #6a5acd;
+        }
+
+        .queue-client {
+            font-weight: 600;
+            color: #e0d6ff;
+            font-size: 1.2rem;
+            max-width: 70%;
+            word-break: break-word;
+        }
+
+        .queue-description {
+            color: #c5b3ff;
+            line-height: 1.5;
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+
+        .queue-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(74, 69, 128, 0.5);
+        }
+
+        .queue-status {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .queue-status::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .queue-status.working {
+            background: rgba(255, 153, 0, 0.15);
+            color: #ff9900;
+        }
+
+        .queue-status.working::before {
+            background-color: #ff9900;
+        }
+
+        .queue-status.waiting {
+            background: rgba(52, 152, 219, 0.15);
+            color: #3498db;
+        }
+
+        .queue-status.waiting::before {
+            background-color: #3498db;
+        }
+
+        .queue-status.done {
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
+        }
+
+        .queue-status.done::before {
+            background-color: #2ecc71;
+        }
+
+        .queue-status.upcoming {
+            background: rgba(155, 89, 182, 0.15);
+            color: #9b59b6;
+        }
+
+        .queue-status.upcoming::before {
+            background-color: #9b59b6;
+        }
+
+        .queue-meta {
+            text-align: right;
+        }
+
+        .queue-deadline {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .queue-price {
+            color: #9d7cff;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .queue-legend {
+            background-color: rgba(40, 35, 70, 0.6);
+            border-radius: 8px;
+            padding: 1.2rem;
+            margin-top: 2rem;
+        }
+
+        .legend-title {
+            color: #b19cff;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            color: #d0c6ff;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .status-indicator.working {
+            background: #ff9900;
+        }
+
+        .status-indicator.waiting {
+            background: #3498db;
+        }
+
+        .status-indicator.done {
+            background: #2ecc71;
+        }
+
+        .status-indicator.upcoming {
+            background: #9b59b6;
+        }
+
+        .queue-note {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .queue-link {
+            color: #9d7cff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .queue-link:hover {
+            text-decoration: underline;
         }
 
         /* Подвал */
@@ -543,6 +913,28 @@
             
             .modal h3 {
                 font-size: 2rem;
+            }
+            
+            .queue-items {
+                grid-template-columns: 1fr;
+            }
+            
+            .queue-filters {
+                justify-content: center;
+            }
+            
+            .queue-info {
+                justify-content: center;
+                text-align: center;
+            }
+            
+            .queue-update-time {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .legend-items {
+                justify-content: center;
             }
         }
     </style>
@@ -692,6 +1084,79 @@
             </form>
         </section>
 
+        <!-- Очередь заказов (после формы заказа) -->
+        <section id="queue" class="queue-section">
+            <h2 data-i18n="queue.title">Очередь заказов</h2>
+            <p class="queue-subtitle" data-i18n="queue.subtitle">Текущие комиссии и их статус. Данные обновляются автоматически.</p>
+            
+            <!-- Фильтры -->
+            <div class="queue-filters">
+                <button class="queue-filter-btn active" data-filter="all" data-i18n="queue.filter.all">Все заказы</button>
+                <button class="queue-filter-btn" data-filter="working" data-i18n="queue.filter.working">В работе</button>
+                <button class="queue-filter-btn" data-filter="waiting" data-i18n="queue.filter.waiting">Ожидает</button>
+                <button class="queue-filter-btn" data-filter="done" data-i18n="queue.filter.done">Завершены</button>
+                <button class="queue-filter-btn" data-filter="next" data-i18n="queue.filter.next">Следующие в очереди</button>
+            </div>
+            
+            <!-- Информация о загрузке -->
+            <div class="queue-info">
+                <span id="queueCount">0</span> <span data-i18n="queue.orders">заказов в очереди</span>
+                <span class="queue-update-time" data-i18n="queue.updated">Обновлено:</span>
+                <span id="lastUpdated">-</span>
+            </div>
+            
+            <!-- Контейнер для карточек -->
+            <div class="queue-container">
+                <div class="queue-loading" id="queueLoading">
+                    <div class="loading-spinner"></div>
+                    <p data-i18n="queue.loading">Загружаем данные о заказах...</p>
+                </div>
+                <div class="queue-items" id="queueItems">
+                    <!-- Здесь появятся карточки заказов -->
+                </div>
+                
+                <div class="queue-empty" id="queueEmpty" style="display: none;">
+                    <div class="empty-icon">📋</div>
+                    <p data-i18n="queue.empty">Нет активных заказов в очереди</p>
+                </div>
+                
+                <div class="queue-error" id="queueError" style="display: none;">
+                    <div class="error-icon">⚠️</div>
+                    <p data-i18n="queue.error">Не удалось загрузить очередь заказов</p>
+                    <p class="error-details" data-i18n="queue.errorDetails">Проверьте подключение к интернету и попробуйте обновить страницу</p>
+                </div>
+            </div>
+            
+            <!-- Легенда -->
+            <div class="queue-legend">
+                <div class="legend-title" data-i18n="queue.legend">Обозначения:</div>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <span class="status-indicator working"></span>
+                        <span data-i18n="queue.status.working">В работе</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="status-indicator waiting"></span>
+                        <span data-i18n="queue.status.waiting">Ожидает</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="status-indicator done"></span>
+                        <span data-i18n="queue.status.done">Завершено</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="status-indicator upcoming"></span>
+                        <span data-i18n="queue.status.upcoming">Будет скоро</span>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="queue-note" data-i18n="queue.note">
+                Данные автоматически обновляются каждые 5 минут. Вы можете редактировать эту очередь в 
+                <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vS9GFUc83lUcJoHGqrgmWtSgkIy7LKvNfwXFQwnkC_yvcWqZVSS90tQRVQrPpZZp-PUNZw8hdUut_Oj/pub?output=csv" 
+                   target="_blank" class="queue-link">Google Таблице</a>.
+            </p>
+        </section>
+
 <!--        
         <section id="shop">
             <h2 data-i18n="shop.title">Магазин</h2>
@@ -718,6 +1183,7 @@
             </div>
         </section>
 -->
+
         <!-- Обо мне -->
         <section id="about">
             <h2 data-i18n="about.title">Обо мне</h2>
@@ -726,80 +1192,6 @@
             <p data-i18n="about.p3">Инструменты: Photoshop, Clip Studio Paint, Procreate.</p>
             
         </section>
-        
-<!-- Вставьте эту секцию перед <section id="about"> -->
-<section id="queue" class="queue-section">
-    <h2 data-i18n="queue.title">Очередь заказов</h2>
-    <p class="queue-subtitle" data-i18n="queue.subtitle">Текущие комиссии и их статус. Данные обновляются автоматически.</p>
-    
-    <!-- Фильтры -->
-    <div class="queue-filters">
-        <button class="queue-filter-btn active" data-filter="all" data-i18n="queue.filter.all">Все заказы</button>
-        <button class="queue-filter-btn" data-filter="working" data-i18n="queue.filter.working">В работе</button>
-        <button class="queue-filter-btn" data-filter="waiting" data-i18n="queue.filter.waiting">Ожидает</button>
-        <button class="queue-filter-btn" data-filter="done" data-i18n="queue.filter.done">Завершены</button>
-        <button class="queue-filter-btn" data-filter="next" data-i18n="queue.filter.next">Следующие в очереди</button>
-    </div>
-    
-    <!-- Информация о загрузке -->
-    <div class="queue-info">
-        <span id="queueCount">0</span> <span data-i18n="queue.orders">заказов в очереди</span>
-        <span class="queue-update-time" data-i18n="queue.updated">Обновлено:</span>
-        <span id="lastUpdated">-</span>
-    </div>
-    
-    <!-- Контейнер для карточек -->
-    <div class="queue-container">
-        <div class="queue-loading" id="queueLoading">
-            <div class="loading-spinner"></div>
-            <p data-i18n="queue.loading">Загружаем данные о заказах...</p>
-        </div>
-        <div class="queue-items" id="queueItems">
-            <!-- Здесь появятся карточки заказов -->
-        </div>
-        
-        <div class="queue-empty" id="queueEmpty" style="display: none;">
-            <div class="empty-icon">📋</div>
-            <p data-i18n="queue.empty">Нет активных заказов в очереди</p>
-        </div>
-        
-        <div class="queue-error" id="queueError" style="display: none;">
-            <div class="error-icon">⚠️</div>
-            <p data-i18n="queue.error">Не удалось загрузить очередь заказов</p>
-            <p class="error-details" data-i18n="queue.errorDetails">Проверьте подключение к интернету и попробуйте обновить страницу</p>
-        </div>
-    </div>
-    
-    <!-- Легенда -->
-    <div class="queue-legend">
-        <div class="legend-title" data-i18n="queue.legend">Обозначения:</div>
-        <div class="legend-items">
-            <div class="legend-item">
-                <span class="status-indicator working"></span>
-                <span data-i18n="queue.status.working">В работе</span>
-            </div>
-            <div class="legend-item">
-                <span class="status-indicator waiting"></span>
-                <span data-i18n="queue.status.waiting">Ожидает</span>
-            </div>
-            <div class="legend-item">
-                <span class="status-indicator done"></span>
-                <span data-i18n="queue.status.done">Завершено</span>
-            </div>
-            <div class="legend-item">
-                <span class="status-indicator upcoming"></span>
-                <span data-i18n="queue.status.upcoming">Будет скоро</span>
-            </div>
-        </div>
-    </div>
-    
-    <p class="queue-note" data-i18n="queue.note">
-        Данные автоматически обновляются каждые 5 минут. Вы можете редактировать эту очередь в 
-        <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vS9GFUc83lUcJoHGqrgmWtSgkIy7LKvNfwXFQwnkC_yvcWqZVSS90tQRVQrPpZZp-PUNZw8hdUut_Oj/pub?output=csv" 
-           target="_blank" class="queue-link">Google Таблице</a>.
-    </p>
-</section>
-        
         
         <!-- Контакты -->
         <section id="contact">
@@ -906,6 +1298,27 @@
                 "shop.product2.title": "Набор стикеров",
                 "shop.product2.desc": "6 виниловых стикеров с пони",
                 
+                // Очередь заказов
+                "queue.title": "Очередь заказов",
+                "queue.subtitle": "Текущие комиссии и их статус. Данные обновляются автоматически.",
+                "queue.filter.all": "Все заказы",
+                "queue.filter.working": "В работе",
+                "queue.filter.waiting": "Ожидает",
+                "queue.filter.done": "Завершены",
+                "queue.filter.next": "Следующие в очереди",
+                "queue.orders": "заказов в очереди",
+                "queue.updated": "Обновлено:",
+                "queue.loading": "Загружаем данные о заказах...",
+                "queue.empty": "Нет активных заказов в очереди",
+                "queue.error": "Не удалось загрузить очередь заказов",
+                "queue.errorDetails": "Проверьте подключение к интернету и попробуйте обновить страницу",
+                "queue.legend": "Обозначения:",
+                "queue.status.working": "В работе",
+                "queue.status.waiting": "Ожидает",
+                "queue.status.done": "Завершено",
+                "queue.status.upcoming": "Будет скоро",
+                "queue.note": "Данные автоматически обновляются каждые 5 минут. Вы можете редактировать эту очередь в Google Таблице.",
+                
                 // Обо мне
                 "about.title": "Обо мне",
                 "about.p1": "Привет~ Я Лу, цифровой художник что с 2022 года рисует маленьких цветных лошадок~",
@@ -920,6 +1333,7 @@
                 "contact.telegram": "Telegram",
                 "contact.vk": "VK",
                 "contact.boosty": "Boosty",
+                "contact.discord": "Discord",
                 "contact.youtube": "YouTube",
                 "contact.email": "Для деловых предложений:",
                 
@@ -1003,6 +1417,27 @@
                 "shop.product2.title": "Sticker Set",
                 "shop.product2.desc": "6 vinyl stickers with ponies",
                 
+                // Queue
+                "queue.title": "Commission Queue",
+                "queue.subtitle": "Current commissions and their status. Data updates automatically.",
+                "queue.filter.all": "All Orders",
+                "queue.filter.working": "In Progress",
+                "queue.filter.waiting": "Waiting",
+                "queue.filter.done": "Completed",
+                "queue.filter.next": "Upcoming",
+                "queue.orders": "orders in queue",
+                "queue.updated": "Updated:",
+                "queue.loading": "Loading order data...",
+                "queue.empty": "No active orders in queue",
+                "queue.error": "Failed to load commission queue",
+                "queue.errorDetails": "Check your internet connection and try refreshing the page",
+                "queue.legend": "Legend:",
+                "queue.status.working": "In Progress",
+                "queue.status.waiting": "Waiting",
+                "queue.status.done": "Completed",
+                "queue.status.upcoming": "Coming Soon",
+                "queue.note": "Data updates automatically every 5 minutes. You can edit this queue in Google Sheets.",
+                
                 // About
                 "about.title": "About Me",
                 "about.p1": "Hi~ I'm Lu, a digital artist who has been drawing little colorful horses since 2022~.",
@@ -1017,6 +1452,7 @@
                 "contact.telegram": "Telegram",
                 "contact.vk": "VK",
                 "contact.boosty": "Boosty",
+                "contact.discord": "Discord",
                 "contact.youtube": "YouTube",
                 "contact.email": "For business inquiries:",
                 
@@ -1235,7 +1671,369 @@
                 closeModal();
             }
         });
+        
+        // ===== ОЧЕРЕДЬ ЗАКАЗОВ =====
+        
+        // Конфигурация
+        const QUEUE_CONFIG = {
+            sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS9GFUc83lUcJoHGqrgmWtSgkIy7LKvNfwXFQwnkC_yvcWqZVSS90tQRVQrPpZZp-PUNZw8hdUut_Oj/pub?output=csv',
+            cacheKey: 'ludekard_queue_cache',
+            cacheDuration: 5 * 60 * 1000, // 5 минут
+            refreshInterval: 2 * 60 * 1000 // 2 минуты
+        };
+        
+        // Класс управления очередью
+        class QueueManager {
+            constructor() {
+                this.data = [];
+                this.filteredData = [];
+                this.currentFilter = 'all';
+                this.isLoading = false;
+                
+                this.initElements();
+                this.setupEventListeners();
+            }
+            
+            initElements() {
+                this.elements = {
+                    container: document.getElementById('queueItems'),
+                    loading: document.getElementById('queueLoading'),
+                    empty: document.getElementById('queueEmpty'),
+                    error: document.getElementById('queueError'),
+                    count: document.getElementById('queueCount'),
+                    lastUpdated: document.getElementById('lastUpdated')
+                };
+            }
+            
+            setupEventListeners() {
+                // Фильтры
+                document.querySelectorAll('.queue-filter-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.setFilter(btn.dataset.filter));
+                });
+                
+                // Автообновление
+                setInterval(() => this.loadQueue(), QUEUE_CONFIG.refreshInterval);
+            }
+            
+            async loadQueue() {
+                if (this.isLoading) return;
+                
+                this.isLoading = true;
+                this.showLoading();
+                
+                try {
+                    // Проверяем кэш
+                    const cached = this.getCachedData();
+                    if (cached && Date.now() - cached.timestamp < QUEUE_CONFIG.cacheDuration) {
+                        console.log('Используем кэшированные данные');
+                        this.processData(cached.data);
+                        return;
+                    }
+                    
+                    // Загружаем новые данные
+                    console.log('Загружаем данные из Google Sheets...');
+                    const csvData = await this.fetchCSV(QUEUE_CONFIG.sheetUrl);
+                    const parsedData = this.parseCSV(csvData);
+                    
+                    // Сохраняем в кэш
+                    this.cacheData(parsedData);
+                    
+                    // Обрабатываем данные
+                    this.processData(parsedData);
+                    
+                } catch (error) {
+                    console.error('Ошибка загрузки очереди:', error);
+                    this.showError();
+                    
+                    // Пробуем загрузить из кэша, даже если он устарел
+                    const cached = this.getCachedData();
+                    if (cached) {
+                        console.log('Используем устаревшие кэшированные данные');
+                        this.processData(cached.data);
+                    }
+                } finally {
+                    this.isLoading = false;
+                }
+            }
+            
+            async fetchCSV(url) {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.text();
+            }
+            
+            parseCSV(csvText) {
+                const rows = csvText.split('\n').map(row => row.split(','));
+                
+                // Предполагаем, что первая строка - заголовки
+                const headers = rows[0] ? rows[0].map(h => h.trim()) : [];
+                
+                // Маппинг заголовков (предполагаемая структура)
+                const headerMap = {
+                    'Номер': 'position',
+                    'Клиент': 'client',
+                    'Описание': 'description',
+                    'Статус': 'status',
+                    'Срок': 'deadline',
+                    'Цена': 'price',
+                    'Приоритет': 'priority'
+                };
+                
+                // Парсим строки
+                const data = [];
+                
+                for (let i = 1; i < rows.length; i++) {
+                    if (!rows[i] || rows[i].length < 2) continue;
+                    
+                    const row = {};
+                    
+                    for (let j = 0; j < headers.length; j++) {
+                        const header = headers[j];
+                        const value = rows[i][j] ? rows[i][j].trim() : '';
+                        
+                        if (headerMap[header]) {
+                            row[headerMap[header]] = value;
+                        } else {
+                            // Если заголовок не распознан, сохраняем как есть
+                            row[header] = value;
+                        }
+                    }
+                    
+                    // Нормализуем статус
+                    if (row.status) {
+                        row.status = this.normalizeStatus(row.status);
+                    } else {
+                        row.status = 'waiting';
+                    }
+                    
+                    // Если есть позиция, конвертируем в число
+                    if (row.position) {
+                        row.position = parseInt(row.position) || i;
+                    } else {
+                        row.position = i;
+                    }
+                    
+                    // Добавляем только если есть клиент
+                    if (row.client && row.client.trim() !== '') {
+                        data.push(row);
+                    }
+                }
+                
+                return data;
+            }
+            
+            normalizeStatus(status) {
+                const statusLower = status.toLowerCase();
+                
+                if (statusLower.includes('работа') || statusLower.includes('working') || statusLower.includes('в процессе')) {
+                    return 'working';
+                } else if (statusLower.includes('заверш') || statusLower.includes('done') || statusLower.includes('готов')) {
+                    return 'done';
+                } else if (statusLower.includes('ожида') || statusLower.includes('waiting') || statusLower.includes('в очереди')) {
+                    return 'waiting';
+                } else if (statusLower.includes('скоро') || statusLower.includes('upcoming') || statusLower.includes('будет')) {
+                    return 'upcoming';
+                }
+                
+                return 'waiting';
+            }
+            
+            processData(data) {
+                this.data = data;
+                this.applyFilter();
+                this.updateCount();
+                this.updateLastUpdated();
+                this.render();
+            }
+            
+            setFilter(filter) {
+                this.currentFilter = filter;
+                
+                // Обновляем активную кнопку
+                document.querySelectorAll('.queue-filter-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.filter === filter);
+                });
+                
+                this.applyFilter();
+                this.render();
+            }
+            
+            applyFilter() {
+                switch (this.currentFilter) {
+                    case 'all':
+                        this.filteredData = [...this.data];
+                        break;
+                    case 'working':
+                        this.filteredData = this.data.filter(item => item.status === 'working');
+                        break;
+                    case 'waiting':
+                        this.filteredData = this.data.filter(item => item.status === 'waiting');
+                        break;
+                    case 'done':
+                        this.filteredData = this.data.filter(item => item.status === 'done');
+                        break;
+                    case 'next':
+                        // Ближайшие 3 заказа в очереди (не завершенные)
+                        this.filteredData = this.data
+                            .filter(item => item.status !== 'done')
+                            .slice(0, 3);
+                        break;
+                    default:
+                        this.filteredData = [...this.data];
+                }
+            }
+            
+            updateCount() {
+                if (this.elements.count) {
+                    this.elements.count.textContent = this.data.length;
+                }
+            }
+            
+            updateLastUpdated() {
+                if (this.elements.lastUpdated) {
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const dateString = now.toLocaleDateString();
+                    this.elements.lastUpdated.textContent = `${dateString} ${timeString}`;
+                }
+            }
+            
+            render() {
+                if (!this.elements.container) return;
+                
+                if (this.filteredData.length === 0) {
+                    this.showEmpty();
+                    return;
+                }
+                
+                this.hideAllMessages();
+                
+                // Сортируем по позиции
+                const sortedData = [...this.filteredData].sort((a, b) => a.position - b.position);
+                
+                const cardsHTML = sortedData.map(item => this.createCardHTML(item)).join('');
+                this.elements.container.innerHTML = cardsHTML;
+            }
+            
+            createCardHTML(item) {
+                const statusText = this.getStatusText(item.status);
+                const deadlineHTML = item.deadline ? 
+                    `<div class="queue-deadline">📅 ${item.deadline}</div>` : '';
+                
+                const priceHTML = item.price ? 
+                    `<div class="queue-price">${item.price}</div>` : '';
+                
+                return `
+                    <div class="queue-card ${item.status}">
+                        <div class="queue-card-header">
+                            <div class="queue-position">${item.position}</div>
+                            <div class="queue-client">${item.client}</div>
+                        </div>
+                        <div class="queue-description">${item.description || 'Без описания'}</div>
+                        <div class="queue-details">
+                            <div class="queue-status ${item.status}">${statusText}</div>
+                            <div class="queue-meta">
+                                ${deadlineHTML}
+                                ${priceHTML}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            getStatusText(status) {
+                const statusMap = {
+                    'working': translations[currentLang]["queue.status.working"],
+                    'waiting': translations[currentLang]["queue.status.waiting"],
+                    'done': translations[currentLang]["queue.status.done"],
+                    'upcoming': translations[currentLang]["queue.status.upcoming"]
+                };
+                return statusMap[status] || status;
+            }
+            
+            // Сообщения
+            showLoading() {
+                this.hideAllMessages();
+                if (this.elements.loading) {
+                    this.elements.loading.style.display = 'block';
+                }
+                if (this.elements.container) {
+                    this.elements.container.innerHTML = '';
+                }
+            }
+            
+            showEmpty() {
+                this.hideAllMessages();
+                if (this.elements.empty) {
+                    this.elements.empty.style.display = 'block';
+                }
+                if (this.elements.container) {
+                    this.elements.container.innerHTML = '';
+                }
+            }
+            
+            showError() {
+                this.hideAllMessages();
+                if (this.elements.error) {
+                    this.elements.error.style.display = 'block';
+                }
+                if (this.elements.container) {
+                    this.elements.container.innerHTML = '';
+                }
+            }
+            
+            hideAllMessages() {
+                if (this.elements.loading) this.elements.loading.style.display = 'none';
+                if (this.elements.empty) this.elements.empty.style.display = 'none';
+                if (this.elements.error) this.elements.error.style.display = 'none';
+            }
+            
+            // Кэширование
+            cacheData(data) {
+                try {
+                    const cache = {
+                        timestamp: Date.now(),
+                        data: data
+                    };
+                    localStorage.setItem(QUEUE_CONFIG.cacheKey, JSON.stringify(cache));
+                } catch (error) {
+                    console.warn('Не удалось сохранить данные в кэш:', error);
+                }
+            }
+            
+            getCachedData() {
+                try {
+                    const cached = localStorage.getItem(QUEUE_CONFIG.cacheKey);
+                    return cached ? JSON.parse(cached) : null;
+                } catch (error) {
+                    console.warn('Не удалось загрузить данные из кэша:', error);
+                    return null;
+                }
+            }
+        }
+        
+        // Инициализация очереди при загрузке страницы
+        let queueManager = null;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferredLanguage') || 'ru';
+            changeLanguage(savedLang);
+            
+            // Инициализируем очередь
+            queueManager = new QueueManager();
+            queueManager.loadQueue();
+        });
+        
+        // Обновляем переводы для очереди при смене языка
+        const originalChangeLanguage = changeLanguage;
+        changeLanguage = function(lang) {
+            originalChangeLanguage(lang);
+            if (queueManager) {
+                queueManager.render();
+            }
+        };
     </script>
 </body>
-
 </html>
