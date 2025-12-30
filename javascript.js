@@ -188,10 +188,12 @@ class QueueManager {
     
     applyFilter() {
         switch (this.currentFilter) {
-            case 'all':
-    // Исключаем завершённые заказы
-    this.filteredData = this.data.filter(item => item.status !== 'done');
-    break;
+            applyFilter() {
+    switch (this.currentFilter) {
+        case 'all':
+            // Только активные (без done)
+            this.filteredData = this.data.filter(item => item.status !== 'done');
+            break;
             case 'working':
                 this.filteredData = this.data.filter(item => item.status === 'working');
                 break;
