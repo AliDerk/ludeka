@@ -725,7 +725,44 @@
             <p data-i18n="about.p3">Инструменты: Photoshop, Clip Studio Paint, Procreate.</p>
             
         </section>
-
+        
+<section id="queue" class="queue-section">
+    <h2 data-i18n="queue.title">queue</h2>
+    <p data-i18n="queue.subtitle">Lu queue for commission (or something else) </p>
+    
+    <div class="queue-filters">
+        <button class="filter-btn active" data-status="all" data-i18n="queue.all">Все</button>
+        <button class="filter-btn" data-status="working" data-i18n="queue.working">В работе</button>
+        <button class="filter-btn" data-status="waiting" data-i18n="queue.waiting">Ожидает</button>
+        <button class="filter-btn" data-status="done" data-i18n="queue.done">Завершены</button>
+    </div>
+    
+    <div class="queue-container">
+        <div class="queue-loading">
+            <div class="spinner"></div>
+            <p data-i18n="queue.loading">Загружаем очередь...</p>
+        </div>
+        <div class="queue-items" id="queueItems">
+            <!-- Данные загружаются динамически -->
+        </div>
+    </div>
+    
+    <div class="queue-legend">
+        <div class="legend-item">
+            <span class="status-dot working"></span>
+            <span data-i18n="queue.status.working">В работе</span>
+        </div>
+        <div class="legend-item">
+            <span class="status-dot waiting"></span>
+            <span data-i18n="queue.status.waiting">Ожидает</span>
+        </div>
+        <div class="legend-item">
+            <span class="status-dot done"></span>
+            <span data-i18n="queue.status.done">Завершено</span>
+        </div>
+    </div>
+</section>
+        
         <!-- Контакты -->
         <section id="contact">
             <h2 data-i18n="contact.title">Контакты и соцсети</h2>
