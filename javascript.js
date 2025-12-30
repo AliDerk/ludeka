@@ -395,14 +395,21 @@ Object.assign(translations.ru, queueTranslations.ru);
 Object.assign(translations.en, queueTranslations.en);
 
 // Инициализация очереди при загрузке страницы
-let queueManager = null;
-
 document.addEventListener('DOMContentLoaded', () => {
-    // ... существующий код ...
+    const savedLang = localStorage.getItem('preferredLanguage') || 'ru';
+    changeLanguage(savedLang);
+    
+    // Если сохранён фильтр "all", и он показывает завершённые,
+    // можно сбросить на активный
+    const savedFilter = localStorage.getItem('queueFilter');
+    if (!savedFilter || savedFilter === 'all') {
+        localStorage.setItem('queueFilter', 'active'); // или оставить 'all'
+    }
     
     // Инициализируем очередь
     queueManager = new QueueManager();
     queueManager.loadQueue();
+});
     
     // Обновляем переводы для очереди
     updateQueueTranslations();
