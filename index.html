@@ -727,41 +727,77 @@
             
         </section>
         
+<!-- Вставьте эту секцию перед <section id="about"> -->
 <section id="queue" class="queue-section">
-    <h2 data-i18n="queue.title">queue</h2>
-    <p data-i18n="queue.subtitle">Lu queue for commission (or something else) </p>
+    <h2 data-i18n="queue.title">Очередь заказов</h2>
+    <p class="queue-subtitle" data-i18n="queue.subtitle">Текущие комиссии и их статус. Данные обновляются автоматически.</p>
     
+    <!-- Фильтры -->
     <div class="queue-filters">
-        <button class="filter-btn active" data-status="all" data-i18n="queue.all">Все</button>
-        <button class="filter-btn" data-status="working" data-i18n="queue.working">В работе</button>
-        <button class="filter-btn" data-status="waiting" data-i18n="queue.waiting">Ожидает</button>
-        <button class="filter-btn" data-status="done" data-i18n="queue.done">Завершены</button>
+        <button class="queue-filter-btn active" data-filter="all" data-i18n="queue.filter.all">Все заказы</button>
+        <button class="queue-filter-btn" data-filter="working" data-i18n="queue.filter.working">В работе</button>
+        <button class="queue-filter-btn" data-filter="waiting" data-i18n="queue.filter.waiting">Ожидает</button>
+        <button class="queue-filter-btn" data-filter="done" data-i18n="queue.filter.done">Завершены</button>
+        <button class="queue-filter-btn" data-filter="next" data-i18n="queue.filter.next">Следующие в очереди</button>
     </div>
     
+    <!-- Информация о загрузке -->
+    <div class="queue-info">
+        <span id="queueCount">0</span> <span data-i18n="queue.orders">заказов в очереди</span>
+        <span class="queue-update-time" data-i18n="queue.updated">Обновлено:</span>
+        <span id="lastUpdated">-</span>
+    </div>
+    
+    <!-- Контейнер для карточек -->
     <div class="queue-container">
-        <div class="queue-loading">
-            <div class="spinner"></div>
-            <p data-i18n="queue.loading">Загружаем очередь...</p>
+        <div class="queue-loading" id="queueLoading">
+            <div class="loading-spinner"></div>
+            <p data-i18n="queue.loading">Загружаем данные о заказах...</p>
         </div>
         <div class="queue-items" id="queueItems">
-            <!-- Данные загружаются динамически -->
+            <!-- Здесь появятся карточки заказов -->
+        </div>
+        
+        <div class="queue-empty" id="queueEmpty" style="display: none;">
+            <div class="empty-icon">📋</div>
+            <p data-i18n="queue.empty">Нет активных заказов в очереди</p>
+        </div>
+        
+        <div class="queue-error" id="queueError" style="display: none;">
+            <div class="error-icon">⚠️</div>
+            <p data-i18n="queue.error">Не удалось загрузить очередь заказов</p>
+            <p class="error-details" data-i18n="queue.errorDetails">Проверьте подключение к интернету и попробуйте обновить страницу</p>
         </div>
     </div>
     
+    <!-- Легенда -->
     <div class="queue-legend">
-        <div class="legend-item">
-            <span class="status-dot working"></span>
-            <span data-i18n="queue.status.working">В работе</span>
-        </div>
-        <div class="legend-item">
-            <span class="status-dot waiting"></span>
-            <span data-i18n="queue.status.waiting">Ожидает</span>
-        </div>
-        <div class="legend-item">
-            <span class="status-dot done"></span>
-            <span data-i18n="queue.status.done">Завершено</span>
+        <div class="legend-title" data-i18n="queue.legend">Обозначения:</div>
+        <div class="legend-items">
+            <div class="legend-item">
+                <span class="status-indicator working"></span>
+                <span data-i18n="queue.status.working">В работе</span>
+            </div>
+            <div class="legend-item">
+                <span class="status-indicator waiting"></span>
+                <span data-i18n="queue.status.waiting">Ожидает</span>
+            </div>
+            <div class="legend-item">
+                <span class="status-indicator done"></span>
+                <span data-i18n="queue.status.done">Завершено</span>
+            </div>
+            <div class="legend-item">
+                <span class="status-indicator upcoming"></span>
+                <span data-i18n="queue.status.upcoming">Будет скоро</span>
+            </div>
         </div>
     </div>
+    
+    <p class="queue-note" data-i18n="queue.note">
+        Данные автоматически обновляются каждые 5 минут. Вы можете редактировать эту очередь в 
+        <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vS9GFUc83lUcJoHGqrgmWtSgkIy7LKvNfwXFQwnkC_yvcWqZVSS90tQRVQrPpZZp-PUNZw8hdUut_Oj/edit" 
+           target="_blank" class="queue-link">Google Таблице</a>.
+    </p>
 </section>
         
         
