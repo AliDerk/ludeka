@@ -1549,7 +1549,7 @@
                 } else {
                     // Если ошибка от Formspree
                     const currentLang = document.querySelector('.language-btn.active').getAttribute('data-lang');
-                    const errorMessage = currentLang === 'ru' ? 
+                    const errorMessage = currentLang === 'en' ? 
                         'Ошибка при отправке. Пожалуйста, попробуйте еще раз.' :
                         'Error sending request. Please try again.';
                     alert(errorMessage);
@@ -1557,7 +1557,7 @@
             } catch (error) {
                 // Если ошибка сети
                 const currentLang = document.querySelector('.language-btn.active').getAttribute('data-lang');
-                const errorMessage = currentLang === 'ru' ? 
+                const errorMessage = currentLang === 'en' ? 
                     'Ошибка сети. Пожалуйста, проверьте соединение.' :
                     'Network error. Please check your connection.';
                 alert(errorMessage);
@@ -1585,7 +1585,7 @@
         });
         
         // Переключение языка
-        let currentLang = 'ru'; // Язык по умолчанию
+        let currentLang = 'en'; // Язык по умолчанию
         
         function changeLanguage(lang) {
             currentLang = lang;
