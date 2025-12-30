@@ -1648,7 +1648,7 @@
         
         // При загрузке страницы проверяем сохраненный язык
         document.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('preferredLanguage') || 'ru';
+            const savedLang = localStorage.getItem('preferredLanguage') || 'en';
             changeLanguage(savedLang);
         });
         
