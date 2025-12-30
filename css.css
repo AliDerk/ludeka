@@ -1,1 +1,187 @@
 background-image: id="image/back.png";
+/* Секция очереди */
+.queue-section {
+    background-color: rgba(20, 20, 35, 0.85);
+    border-radius: 12px;
+    padding: 2.5rem;
+    margin-bottom: 4rem;
+    border: 1px solid #2a2a4a;
+}
+
+.queue-filters {
+    display: flex;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+}
+
+.queue-container {
+    min-height: 300px;
+    position: relative;
+}
+
+.queue-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(106, 90, 205, 0.3);
+    border-top: 3px solid #6a5acd;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Карточки заказов */
+.queue-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.queue-card {
+    background: linear-gradient(145deg, rgba(40, 35, 70, 0.8), rgba(25, 22, 45, 0.8));
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid #3a3560;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.queue-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.queue-card.working {
+    border-left: 4px solid #f39c12;
+}
+
+.queue-card.waiting {
+    border-left: 4px solid #3498db;
+}
+
+.queue-card.done {
+    border-left: 4px solid #2ecc71;
+    opacity: 0.8;
+}
+
+.queue-number {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background: #6a5acd;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.queue-client {
+    font-weight: 600;
+    color: #b19cff;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.queue-description {
+    color: #c5b3ff;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.queue-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #3a3560;
+}
+
+.queue-status {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.queue-status.working {
+    background: rgba(243, 156, 18, 0.2);
+    color: #f39c12;
+}
+
+.queue-status.waiting {
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+}
+
+.queue-status.done {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+}
+
+.queue-price {
+    color: #9d7cff;
+    font-weight: bold;
+}
+
+.queue-legend {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #c5b3ff;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.status-dot.working {
+    background: #f39c12;
+}
+
+.status-dot.waiting {
+    background: #3498db;
+}
+
+.status-dot.done {
+    background: #2ecc71;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .queue-items {
+        grid-template-columns: 1fr;
+    }
+    
+    .queue-card {
+        padding: 1rem;
+    }
+}
