@@ -4,7 +4,7 @@
 const QUEUE_CONFIG = {
     sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS9GFUc83lUcJoHGqrgmWtSgkIy7LKvNfwXFQwnkC_yvcWqZVSS90tQRVQrPpZZp-PUNZw8hdUut_Oj/pub?output=csv',
     cacheKey: 'ludekard_queue_cache',
-    cacheDuration: 5 * 60 * 1000, // 5 минут
+    cacheDuration: 2 * 60 * 1000, // 2 минут
     refreshInterval: 2 * 60 * 1000 // 2 минуты
 };
 
@@ -29,10 +29,8 @@ class QueueManager {
             error: document.getElementById('queueError'),
             count: document.getElementById('queueCount'),
             lastUpdated: document.getElementById('lastUpdated'),
-            commissionStatus: document.getElementById('commissionStatus') || document.querySelector('.status[data-i18n^="commissions.status"]')
+            commissionStatus: document.getElementById('commissionStatus') // Добавлен элемент статуса комиссий
         };
-        
-        console.log('Найден элемент статуса:', this.elements.commissionStatus);
     }
 
     setupEventListeners() {
@@ -97,74 +95,43 @@ class QueueManager {
 
     parseCSV(csvText) {
         console.log('=== ПАРСИНГ CSV ===');
-        console.log('Первые 300 символов CSV:', csvText.substring(0, 300));
+        const rows = csvText.split('\n').map(row => row.split(','));
         
-        // Разбиваем на строки, учитывая разные форматы переноса строк
-        const rows = csvText.split(/\r?\n/).map(row => {
-            return row.split(',').map(cell => {
-                // Убираем кавычки и пробелы
-                return cell.replace(/"/g, '').trim();
-            });
-        });
-        
-        console.log('Первая строка после парсинга:', rows[0]);
-        console.log('Длина первой строки:', rows[0]?.length);
-        
-        // ПРОБЛЕМА: Ваш CSV показывает, что заголовки искажены
-        // Решение: ищем "YES" в ЛЮБОЙ строке таблицы, не только в первой
-        
+        // Проверяем статус комиссий в ячейке G1 (первая строка, седьмой столбец, индекс 6)
         let commissionsOpen = false;
-        console.log('=== ПОИСК "YES" В ТАБЛИЦЕ ===');
-        
-        // Ищем "YES" в ВСЕЙ таблице (первые 3 строки для надежности)
-        for (let i = 0; i < Math.min(rows.length, 5); i++) {
-            console.log(`Строка ${i}:`, rows[i]);
-            if (rows[i]) {
-                for (let j = 0; j < rows[i].length; j++) {
-                    const cell = rows[i][j];
-                    const cellUpper = cell.toUpperCase();
-                    console.log(`  Ячейка [${i}][${j}]: "${cell}" → "${cellUpper}"`);
-                    
-                    if (cellUpper === 'YES') {
-                        commissionsOpen = true;
-                        console.log(`✅ НАЙДЕНО "YES" в строке ${i}, столбце ${j}`);
-                        break;
-                    }
-                }
-            }
-            if (commissionsOpen) break;
+        if (rows[0] && rows[0].length >= 7) {
+            const commissionStatus = rows[0][6] ? rows[0][6].trim() : '';
+            console.log('Ячейка G1:', rows[0][6]);
+            console.log('Ячейка G1 после trim():', commissionStatus);
+            commissionsOpen = commissionStatus.toUpperCase() === 'YES';
         }
         
-        console.log('Итоговый статус комиссий:', commissionsOpen ? 'ОТКРЫТЫ' : 'ЗАКРЫТЫ');
+        // Дополнительная проверка: ищем YES в любой ячейке первой строки
+        if (!commissionsOpen && rows[0]) {
+            for (let cell of rows[0]) {
+                if (cell && cell.trim().toUpperCase() === 'YES') {
+                    commissionsOpen = true;
+                    console.log('Найден YES в другой ячейке:', cell);
+                    break;
+                }
+            }
+        }
         
-        // Маппинг заголовков - предполагаем, что они в первой строке
+        console.log('Статус комиссий:', commissionsOpen ? 'ОТКРЫТЫ' : 'ЗАКРЫТЫ');
+
+        // Предполагаем, что первая строка - заголовки
         const headers = rows[0] ? rows[0].map(h => h.trim()) : [];
-        console.log('Заголовки:', headers);
-        
-        // Пробуем определить заголовки автоматически
-        const headerMap = {};
-        if (headers.length > 0) {
-            // Автоматическое определение столбцов
-            for (let i = 0; i < headers.length; i++) {
-                const header = headers[i].toLowerCase();
-                if (header.includes('ne') || header.includes('номер') || header.includes('№')) {
-                    headerMap[i] = 'position';
-                } else if (header.includes('kmwerr') || header.includes('клиент') || header.includes('client')) {
-                    headerMap[i] = 'client';
-                } else if (header.includes('omvcanwe') || header.includes('описание') || header.includes('description')) {
-                    headerMap[i] = 'description';
-                } else if (header.includes('crazyc') || header.includes('craryc') || header.includes('статус') || header.includes('status')) {
-                    headerMap[i] = 'status';
-                } else if (header.includes('cook') || header.includes('cpox') || header.includes('срок') || header.includes('deadline')) {
-                    headerMap[i] = 'deadline';
-                } else if (header.includes('llena') || header.includes('ljena') || header.includes('цена') || header.includes('price')) {
-                    headerMap[i] = 'price';
-                }
-            }
-        }
-        
-        console.log('Автоматическое определение заголовков:', headerMap);
-        
+
+        // Маппинг заголовков для вашей таблицы
+        const headerMap = {
+            'Ne': 'position',
+            'Kmwerr': 'client',
+            'Omvcanwe': 'description',
+            'Craryc': 'status',
+            'Cpox': 'deadline',
+            'Ljena': 'price'
+        };
+
         const data = [];
 
         // Начинаем с индекса 1, пропуская заголовки
@@ -172,13 +139,13 @@ class QueueManager {
             if (!rows[i] || rows[i].length < 2) continue;
 
             const row = {};
-            
-            // Парсим строку с помощью автоматического определения или по индексу
-            for (let j = 0; j < rows[i].length; j++) {
+
+            for (let j = 0; j < headers.length && j < rows[i].length; j++) {
+                const header = headers[j];
                 const value = rows[i][j] ? rows[i][j].trim() : '';
-                
-                if (headerMap[j]) {
-                    row[headerMap[j]] = value;
+
+                if (headerMap[header]) {
+                    row[headerMap[header]] = value;
                 } else if (j === 0) {
                     row.position = value;
                 } else if (j === 1) {
@@ -202,8 +169,16 @@ class QueueManager {
             }
 
             // Если есть позиция, конвертируем в число
-            if (row.position) {
-                row.position = parseInt(row.position) || i;
+            if (row.position && !isNaN(row.position)) {
+                row.position = parseInt(row.position);
+            } else if (row.client) {
+                // Извлекаем номер из начала строки клиента (например "1 wake-up" -> 1)
+                const match = row.client.match(/^(\d+)/);
+                if (match) {
+                    row.position = parseInt(match[1]);
+                } else {
+                    row.position = i;
+                }
             } else {
                 row.position = i;
             }
@@ -215,8 +190,6 @@ class QueueManager {
         }
 
         console.log('Распарсено заказов:', data.length);
-        console.log('=== КОНЕЦ ПАРСИНГА CSV ===');
-
         return {
             queueData: data,
             commissionsOpen: commissionsOpen
@@ -226,14 +199,14 @@ class QueueManager {
     normalizeStatus(status) {
         const statusLower = status.toLowerCase();
         
-        // Расширенная проверка статусов
-        if (statusLower.includes('working') || statusLower.includes('работа') || statusLower.includes('в процессе')) {
+        // Для ваших статусов
+        if (statusLower.includes('working')) {
             return 'working';
-        } else if (statusLower.includes('upcom') || statusLower.includes('скоро') || statusLower.includes('ckopo') || statusLower.includes('будет')) {
+        } else if (statusLower.includes('скоро') || statusLower.includes('ckopo') || statusLower.includes('upcom')) {
             return 'upcoming';
-        } else if (statusLower.includes('waiting') || statusLower.includes('oxwqa') || statusLower.includes('ожида') || statusLower.includes('в очереди')) {
+        } else if (statusLower.includes('oxwqa') || statusLower.includes('waiting')) {
             return 'waiting';
-        } else if (statusLower.includes('заверш') || statusLower.includes('done') || statusLower.includes('готов') || statusLower.includes('готово')) {
+        } else if (statusLower.includes('заверш') || statusLower.includes('done') || statusLower.includes('готов')) {
             return 'done';
         }
         
@@ -241,10 +214,9 @@ class QueueManager {
     }
 
     processData(data, commissionsOpen) {
-        console.log('processData вызван:', { 
+        console.log('Обработка данных:', { 
             заказов: data.length, 
-            статусКомиссий: commissionsOpen,
-            текущийСтатус: this.commissionsOpen
+            статусКомиссий: commissionsOpen 
         });
         
         this.data = data;
@@ -312,35 +284,27 @@ class QueueManager {
     }
 
     updateCommissionStatus() {
-        console.log('updateCommissionStatus вызван:', {
-            элемент: this.elements.commissionStatus,
-            текущийСтатус: this.commissionsOpen,
-            currentLang: currentLang
-        });
-        
+        console.log('Обновление статуса комиссий:', this.commissionsOpen);
         const statusElement = this.elements.commissionStatus;
         if (!statusElement) {
-            console.error('❌ Элемент commissionStatus не найден!');
+            console.error('Элемент статуса комиссий не найден');
             return;
         }
 
         if (this.commissionsOpen) {
-            console.log('✅ Устанавливаем статус: ОТКРЫТЫ');
             statusElement.className = 'status status-open';
-            statusElement.setAttribute('data-i18n', 'commissions.status.open');
-            // Используем прямой текст для теста
             statusElement.textContent = '✓ Комиссии открыты';
-            if (translations[currentLang] && translations[currentLang]["commissions.status.open"]) {
-                statusElement.textContent = translations[currentLang]["commissions.status.open"];
+            // Также обновляем перевод, если он доступен
+            if (window.translations && window.currentLang && window.translations[window.currentLang]) {
+                const text = window.translations[window.currentLang]["commissions.status.open"];
+                if (text) statusElement.textContent = text;
             }
         } else {
-            console.log('❌ Устанавливаем статус: ЗАКРЫТЫ');
             statusElement.className = 'status status-closed';
-            statusElement.setAttribute('data-i18n', 'commissions.status.closed');
-            // Используем прямой текст для теста
             statusElement.textContent = '✗ Комиссии закрыты';
-            if (translations[currentLang] && translations[currentLang]["commissions.status.closed"]) {
-                statusElement.textContent = translations[currentLang]["commissions.status.closed"];
+            if (window.translations && window.currentLang && window.translations[window.currentLang]) {
+                const text = window.translations[window.currentLang]["commissions.status.closed"];
+                if (text) statusElement.textContent = text;
             }
         }
     }
@@ -464,21 +428,23 @@ class QueueManager {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM загружен, инициализируем очередь...');
     
-    // Очищаем кэш принудительно для теста
+    // Очищаем кэш для теста
     localStorage.removeItem('ludekard_queue_cache');
     
     const savedLang = localStorage.getItem('preferredLanguage') || 'ru';
-    changeLanguage(savedLang);
+    if (typeof changeLanguage === 'function') {
+        changeLanguage(savedLang);
+    }
 
     // Инициализируем очередь
-    queueManager = new QueueManager();
-    queueManager.loadQueue();
+    window.queueManager = new QueueManager();
+    window.queueManager.loadQueue();
     
     // Принудительная проверка через 3 секунды
     setTimeout(() => {
         console.log('Принудительная проверка статуса через 3 секунды...');
-        if (queueManager) {
-            queueManager.loadQueue();
+        if (window.queueManager) {
+            window.queueManager.loadQueue();
         }
     }, 3000);
 });
@@ -486,18 +452,26 @@ document.addEventListener('DOMContentLoaded', () => {
 // Обновляем переводы для очереди
 function updateQueueTranslations() {
     console.log('Обновление переводов очереди...');
-    if (queueManager) {
-        queueManager.updateCommissionStatus();
-        queueManager.render();
+    if (window.queueManager) {
+        window.queueManager.updateCommissionStatus();
+        window.queueManager.render();
     }
 }
 
-// Модифицируем функцию changeLanguage
-const originalChangeLanguage = window.changeLanguage;
-window.changeLanguage = function(lang) {
-    console.log('Смена языка на:', lang);
-    if (originalChangeLanguage) {
-        originalChangeLanguage(lang);
-    }
-    updateQueueTranslations();
-};
+// Если функция changeLanguage существует, модифицируем её
+if (typeof changeLanguage !== 'undefined') {
+    const originalChangeLanguage = changeLanguage;
+    window.changeLanguage = function(lang) {
+        console.log('Смена языка на:', lang);
+        const result = originalChangeLanguage(lang);
+        updateQueueTranslations();
+        return result;
+    };
+} else {
+    // Создаем простую функцию changeLanguage если её нет
+    window.changeLanguage = function(lang) {
+        console.log('Смена языка на:', lang);
+        localStorage.setItem('preferredLanguage', lang);
+        updateQueueTranslations();
+    };
+}
