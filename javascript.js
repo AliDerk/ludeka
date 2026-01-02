@@ -8,6 +8,9 @@ const QUEUE_CONFIG = {
     refreshInterval: 2 * 60 * 1000 // 2 минуты
 };
 
+// Глобальная переменная для статуса комиссий
+let commissionsOpen = true; // По умолчанию открыты
+
 // Класс управления очередью
 class QueueManager {
     constructor() {
@@ -27,7 +30,8 @@ class QueueManager {
             empty: document.getElementById('queueEmpty'),
             error: document.getElementById('queueError'),
             count: document.getElementById('queueCount'),
-            lastUpdated: document.getElementById('lastUpdated')
+            lastUpdated: document.getElementById('lastUpdated'),
+            commissionsStatus: document.getElementById('commissionsStatus')
         };
     }
     
@@ -52,20 +56,23 @@ class QueueManager {
             const cached = this.getCachedData();
             if (cached && Date.now() - cached.timestamp < QUEUE_CONFIG.cacheDuration) {
                 console.log('Используем кэшированные данные');
-                this.processData(cached.data);
+                this.processData(cached.data, cached.commissionsOpen);
                 return;
             }
             
             // Загружаем новые данные
             console.log('Загружаем данные из Google Sheets...');
             const csvData = await this.fetchCSV(QUEUE_CONFIG.sheetUrl);
-            const parsedData = this.parseCSV(csvData);
+            const { parsedData, commissionsStatus } = this.parseCSV(csvData);
+            
+            // Определяем статус комиссий из ячейки G1
+            const isOpen = this.parseCommissionsStatus(commissionsStatus);
             
             // Сохраняем в кэш
-            this.cacheData(parsedData);
+            this.cacheData(parsedData, isOpen);
             
             // Обрабатываем данные
-            this.processData(parsedData);
+            this.processData(parsedData, isOpen);
             
         } catch (error) {
             console.error('Ошибка загрузки очереди:', error);
@@ -75,7 +82,7 @@ class QueueManager {
             const cached = this.getCachedData();
             if (cached) {
                 console.log('Используем устаревшие кэшированные данные');
-                this.processData(cached.data);
+                this.processData(cached.data, cached.commissionsOpen);
             }
         } finally {
             this.isLoading = false;
@@ -91,7 +98,31 @@ class QueueManager {
     }
     
     parseCSV(csvText) {
-        const rows = csvText.split('\n').map(row => row.split(','));
+        const rows = csvText.split('\n').map(row => {
+            // Обработка CSV с учётом запятых внутри кавычек
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let char of row) {
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        });
+        
+        // Извлекаем статус комиссий из ячейки G1 (индекс 6 в первой строке)
+        let commissionsStatus = 'YES'; // Значение по умолчанию
+        if (rows[0] && rows[0][6]) {
+            commissionsStatus = rows[0][6].trim().toUpperCase();
+        }
         
         // Предполагаем, что первая строка - заголовки
         const headers = rows[0] ? rows[0].map(h => h.trim()) : [];
@@ -117,7 +148,7 @@ class QueueManager {
             
             for (let j = 0; j < headers.length; j++) {
                 const header = headers[j];
-                const value = rows[i][j] ? rows[i][j].trim() : '';
+                const value = rows[i][j] ? rows[i][j].trim().replace(/^"|"$/g, '') : '';
                 
                 if (headerMap[header]) {
                     row[headerMap[header]] = value;
@@ -147,7 +178,38 @@ class QueueManager {
             }
         }
         
-        return data;
+        return {
+            parsedData: data,
+            commissionsStatus: commissionsStatus
+        };
+    }
+    
+    parseCommissionsStatus(status) {
+        // Преобразуем различные варианты в YES/NO
+        const statusUpper = status.toUpperCase().trim();
+        
+        // YES варианты
+        if (statusUpper === 'YES' || 
+            statusUpper === 'ДА' || 
+            statusUpper === 'OPEN' ||
+            statusUpper === 'ОТКРЫТО' ||
+            statusUpper === 'TRUE' ||
+            statusUpper === '1') {
+            return true;
+        }
+        
+        // NO варианты
+        if (statusUpper === 'NO' || 
+            statusUpper === 'НЕТ' || 
+            statusUpper === 'CLOSED' ||
+            statusUpper === 'ЗАКРЫТО' ||
+            statusUpper === 'FALSE' ||
+            statusUpper === '0') {
+            return false;
+        }
+        
+        // По умолчанию - открыты
+        return true;
     }
     
     normalizeStatus(status) {
@@ -166,12 +228,29 @@ class QueueManager {
         return 'waiting';
     }
     
-    processData(data) {
+    processData(data, isOpen) {
         this.data = data;
+        commissionsOpen = isOpen; // Сохраняем глобально
+        
         this.applyFilter();
         this.updateCount();
         this.updateLastUpdated();
         this.render();
+        this.updateCommissionsStatus();
+    }
+    
+    updateCommissionsStatus() {
+        if (!this.elements.commissionsStatus) return;
+        
+        const statusElement = this.elements.commissionsStatus;
+        
+        if (commissionsOpen) {
+            statusElement.className = 'status status-open';
+            statusElement.textContent = translations[currentLang]["commissions.status.open"];
+        } else {
+            statusElement.className = 'status status-closed';
+            statusElement.textContent = translations[currentLang]["commissions.status.closed"];
+        }
     }
     
     setFilter(filter) {
@@ -188,14 +267,12 @@ class QueueManager {
     
     applyFilter() {
         switch (this.currentFilter) {
-            applyFilter() {
-    switch (this.currentFilter) {
-        case 'all':
-            // Только активные (без done)
-            this.filteredData = this.data
+            case 'all':
+                // Только активные (без done), первые 5
+                this.filteredData = this.data
                     .filter(item => item.status !== 'done')
                     .slice(0, 5);
-            break;
+                break;
             case 'working':
                 this.filteredData = this.data.filter(item => item.status === 'working');
                 break;
@@ -322,11 +399,12 @@ class QueueManager {
     }
     
     // Кэширование
-    cacheData(data) {
+    cacheData(data, commissionsOpen) {
         try {
             const cache = {
                 timestamp: Date.now(),
-                data: data
+                data: data,
+                commissionsOpen: commissionsOpen
             };
             localStorage.setItem(QUEUE_CONFIG.cacheKey, JSON.stringify(cache));
         } catch (error) {
@@ -345,7 +423,7 @@ class QueueManager {
     }
 }
 
-// Переводы для очереди (добавьте в объект translations)
+// Переводы для очереди и статуса комиссий
 const queueTranslations = {
     ru: {
         "queue.title": "Очередь заказов",
@@ -366,7 +444,9 @@ const queueTranslations = {
         "queue.status.waiting": "Ожидает",
         "queue.status.done": "Завершено",
         "queue.status.upcoming": "Будет скоро",
-        "queue.note": "Данные автоматически обновляются каждые 5 минут. Вы можете редактировать эту очередь в Google Таблице."
+        "queue.note": "Данные автоматически обновляются каждые 5 минут. Вы можете редактировать эту очередь в Google Таблице.",
+        "commissions.status.open": "✓ Комиссии открыты",
+        "commissions.status.closed": "✗ Комиссии закрыты"
     },
     en: {
         "queue.title": "Commission Queue",
@@ -387,7 +467,9 @@ const queueTranslations = {
         "queue.status.waiting": "Waiting",
         "queue.status.done": "Completed",
         "queue.status.upcoming": "Coming Soon",
-        "queue.note": "Data updates automatically every 5 minutes. You can edit this queue in Google Sheets."
+        "queue.note": "Data updates automatically every 5 minutes. You can edit this queue in Google Sheets.",
+        "commissions.status.open": "✓ Commissions Open",
+        "commissions.status.closed": "✗ Commissions Closed"
     }
 };
 
@@ -396,30 +478,23 @@ Object.assign(translations.ru, queueTranslations.ru);
 Object.assign(translations.en, queueTranslations.en);
 
 // Инициализация очереди при загрузке страницы
+let queueManager = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     const savedLang = localStorage.getItem('preferredLanguage') || 'ru';
     changeLanguage(savedLang);
-    
-    // Если сохранён фильтр "all", и он показывает завершённые,
-    // можно сбросить на активный
-    const savedFilter = localStorage.getItem('queueFilter');
-    if (!savedFilter || savedFilter === 'all') {
-        localStorage.setItem('queueFilter', 'active'); // или оставить 'all'
-    }
     
     // Инициализируем очередь
     queueManager = new QueueManager();
     queueManager.loadQueue();
 });
-    
-    // Обновляем переводы для очереди
-    updateQueueTranslations();
-});
 
+// Обновляем переводы для очереди и статуса комиссий
 function updateQueueTranslations() {
     // Эта функция будет вызвана при смене языка
     if (queueManager) {
         queueManager.render();
+        queueManager.updateCommissionsStatus();
     }
 }
 
