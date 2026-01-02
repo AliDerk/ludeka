@@ -397,6 +397,11 @@
             background-color: rgba(46, 204, 113, 0.2);
             color: #2ecc71;
         }
+        
+        .status-closed {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
 
         /* Форма */
         .form-group {
@@ -1018,7 +1023,7 @@
         <!-- Комиссии -->
         <section id="commissions">
             <h2 data-i18n="commissions.title">Заказать арт</h2>
-            <div class="status status-open" data-i18n="commissions.status">✓ Комиссии открыты</div>
+            <div id="commissionStatus" class="status status-open" data-i18n="commissions.status.open">✓ Комиссии открыты</div>
 
             <div class="pricing">
                 <div class="price-card">
@@ -1261,7 +1266,8 @@
 
                 // Комиссии
                 "commissions.title": "Заказать арт",
-                "commissions.status": "✓ Комиссии открыты", // ✓ Комиссии открыты 🛇 Комиссии закрыты 
+                "commissions.status.open": "✓ Комиссии открыты",
+                "commissions.status.closed": "✗ Комиссии закрыты",
                 "commissions.sketch.title": "Портрет",
                 "commissions.sketch.desc": "Арт по пояс с тенями и освещением",
                 "commissions.sketch.list1": "Черно-белый или простой цвет",
@@ -1380,7 +1386,8 @@
 
                 // Commissions
                 "commissions.title": "Order Art",
-               "commissions.status": "✓ Commissions Open",// ✓ Commissions Open 🛇 Commissions Closed 
+                "commissions.status.open": "✓ Commissions Open",
+                "commissions.status.closed": "✗ Commissions Closed",
                 "commissions.sketch.title": "Portrait",
                 "commissions.sketch.desc": "Bust portrait with shadows and lighting",
                 "commissions.sketch.list1": "Black and white or simple color",
@@ -1690,6 +1697,7 @@
                 this.filteredData = [];
                 this.currentFilter = 'all';
                 this.isLoading = false;
+                this.commissionsOpen = false; // Статус комиссий
 
                 this.initElements();
                 this.setupEventListeners();
@@ -1702,7 +1710,8 @@
                     empty: document.getElementById('queueEmpty'),
                     error: document.getElementById('queueError'),
                     count: document.getElementById('queueCount'),
-                    lastUpdated: document.getElementById('lastUpdated')
+                    lastUpdated: document.getElementById('lastUpdated'),
+                    commissionStatus: document.getElementById('commissionStatus')
                 };
             }
 
@@ -1727,7 +1736,7 @@
                     const cached = this.getCachedData();
                     if (cached && Date.now() - cached.timestamp < QUEUE_CONFIG.cacheDuration) {
                         console.log('Используем кэшированные данные');
-                        this.processData(cached.data);
+                        this.processData(cached.data, cached.commissionsOpen);
                         return;
                     }
 
@@ -1737,10 +1746,10 @@
                     const parsedData = this.parseCSV(csvData);
 
                     // Сохраняем в кэш
-                    this.cacheData(parsedData);
+                    this.cacheData(parsedData.queueData, parsedData.commissionsOpen);
 
                     // Обрабатываем данные
-                    this.processData(parsedData);
+                    this.processData(parsedData.queueData, parsedData.commissionsOpen);
 
                 } catch (error) {
                     console.error('Ошибка загрузки очереди:', error);
@@ -1750,7 +1759,7 @@
                     const cached = this.getCachedData();
                     if (cached) {
                         console.log('Используем устаревшие кэшированные данные');
-                        this.processData(cached.data);
+                        this.processData(cached.data, cached.commissionsOpen);
                     }
                 } finally {
                     this.isLoading = false;
@@ -1782,7 +1791,16 @@
                     'Приоритет': 'priority'
                 };
 
-                // Парсим строки
+                // Проверяем статус комиссий из ячейки G1 (7-й столбец, 1-я строка данных)
+                let commissionsOpen = false;
+                // G1 - это 7-й столбец, но CSV начинается с заголовков
+                // Первая строка данных - это вторая строка в массиве (индекс 1)
+                if (rows[1] && rows[1].length >= 7) {
+                    const commissionStatus = rows[1][6] ? rows[1][6].trim() : '';
+                    commissionsOpen = commissionStatus.toUpperCase() === 'YES';
+                }
+
+                // Парсим строки (начинаем с 1, так как 0 - заголовки)
                 const data = [];
 
                 for (let i = 1; i < rows.length; i++) {
@@ -1822,7 +1840,10 @@
                     }
                 }
 
-                return data;
+                return {
+                    queueData: data,
+                    commissionsOpen: commissionsOpen
+                };
             }
 
             normalizeStatus(status) {
@@ -1841,11 +1862,14 @@
                 return 'waiting';
             }
 
-            processData(data) {
+            processData(data, commissionsOpen) {
                 this.data = data;
+                this.commissionsOpen = commissionsOpen;
+
                 this.applyFilter();
                 this.updateCount();
                 this.updateLastUpdated();
+                this.updateCommissionStatus();
                 this.render();
             }
 
@@ -1864,7 +1888,9 @@
             applyFilter() {
                 switch (this.currentFilter) {
                     case 'all':
-                        this.filteredData = [...this.data];
+                        // Только активные (без done)
+                        this.filteredData = this.data
+                            .filter(item => item.status !== 'done');
                         break;
                     case 'working':
                         this.filteredData = this.data.filter(item => item.status === 'working');
@@ -1898,6 +1924,21 @@
                     const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     const dateString = now.toLocaleDateString();
                     this.elements.lastUpdated.textContent = `${dateString} ${timeString}`;
+                }
+            }
+
+            updateCommissionStatus() {
+                const statusElement = this.elements.commissionStatus;
+                if (!statusElement) return;
+
+                if (this.commissionsOpen) {
+                    statusElement.className = 'status status-open';
+                    statusElement.setAttribute('data-i18n', 'commissions.status.open');
+                    statusElement.textContent = translations[currentLang]["commissions.status.open"];
+                } else {
+                    statusElement.className = 'status status-closed';
+                    statusElement.setAttribute('data-i18n', 'commissions.status.closed');
+                    statusElement.textContent = translations[currentLang]["commissions.status.closed"];
                 }
             }
 
@@ -1992,11 +2033,12 @@
             }
 
             // Кэширование
-            cacheData(data) {
+            cacheData(data, commissionsOpen) {
                 try {
                     const cache = {
                         timestamp: Date.now(),
-                        data: data
+                        data: data,
+                        commissionsOpen: commissionsOpen
                     };
                     localStorage.setItem(QUEUE_CONFIG.cacheKey, JSON.stringify(cache));
                 } catch (error) {
@@ -2033,6 +2075,7 @@
             originalChangeLanguage(lang);
             if (queueManager) {
                 queueManager.render();
+                queueManager.updateCommissionStatus();
             }
         };
     </script>
