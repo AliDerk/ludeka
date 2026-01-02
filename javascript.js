@@ -2,15 +2,13 @@
 
 // Конфигурация
 const QUEUE_CONFIG = {
-    sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS9GFUc83lUcJoHGqrgmWtSgkIy7LKvNfwXFQwnkC_yvcWqZVSS90tQRVQrPpZZp-PUNZw8hdUut_Oj/pub?gid=0&single=true&output=csv',
-    cacheKey: 'ludekard_queue_cache',
-    cacheDuration: 3 * 60 * 1000, // 3 минуты
-    refreshInterval: 2 * 60 * 1000 // 2 минуты
+    sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS9GFUc83lUcJoHGqrgmWtSgkIy7LKvNfwXFQwnkC_yvcWqZVSS90tQRVQrPpZZp-PUNZw8hdUut_Oj/pub?output=csv',
+    refreshInterval: 2 * 60 * 1000 // Обновление каждые 2 минуты
 };
 
 // Глобальные переменные для хранения данных
 let queueData = [];
-let commissionsStatus = false; // false = закрыты, true = открыты
+let commissionsStatus = false;
 
 // Функция для загрузки данных из Google Таблицы
 async function loadQueueData() {
@@ -86,22 +84,9 @@ async function loadQueueData() {
         // Обновляем время последнего обновления
         updateLastUpdatedTime();
         
-        // Сохраняем в кэш
-        saveToCache(data, commissionsOpen);
-        
     } catch (error) {
         console.error('❌ Ошибка загрузки данных:', error);
         showError();
-        
-        // Пробуем загрузить из кэша
-        const cached = loadFromCache();
-        if (cached) {
-            console.log('Используем кэшированные данные');
-            queueData = cached.data;
-            commissionsStatus = cached.commissionsOpen;
-            updateCommissionStatus();
-            updateQueueDisplay();
-        }
     }
 }
 
@@ -293,40 +278,6 @@ function showError() {
     }
 }
 
-// Функция для сохранения в кэш
-function saveToCache(data, commissionsOpen) {
-    try {
-        const cache = {
-            timestamp: Date.now(),
-            data: data,
-            commissionsOpen: commissionsOpen
-        };
-        localStorage.setItem(QUEUE_CONFIG.cacheKey, JSON.stringify(cache));
-    } catch (error) {
-        console.warn('Не удалось сохранить в кэш:', error);
-    }
-}
-
-// Функция для загрузки из кэша
-function loadFromCache() {
-    try {
-        const cached = localStorage.getItem(QUEUE_CONFIG.cacheKey);
-        if (!cached) return null;
-        
-        const cache = JSON.parse(cached);
-        
-        // Проверяем, не устарели ли данные
-        if (Date.now() - cache.timestamp > QUEUE_CONFIG.cacheDuration) {
-            return null;
-        }
-        
-        return cache;
-    } catch (error) {
-        console.warn('Не удалось загрузить из кэша:', error);
-        return null;
-    }
-}
-
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Страница загружена, инициализируем очередь...');
@@ -337,14 +288,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // Настраиваем автообновление
     setInterval(loadQueueData, QUEUE_CONFIG.refreshInterval);
     
-    // Принудительное обновление при клике на секцию очереди
-    const queueSection = document.getElementById('queue');
-    if (queueSection) {
-        queueSection.addEventListener('click', function(e) {
-            if (e.target.classList.contains('queue-link')) {
-                loadQueueData();
-            }
-        });
+    // Кнопка ручного обновления (опционально)
+    const refreshButton = document.createElement('button');
+    refreshButton.textContent = '🔄 Обновить';
+    refreshButton.style.cssText = `
+        background: rgba(106, 90, 205, 0.7);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-left: 1rem;
+        font-size: 0.9rem;
+    `;
+    refreshButton.onclick = loadQueueData;
+    
+    // Добавляем кнопку рядом с информацией об обновлении
+    const queueInfo = document.querySelector('.queue-info');
+    if (queueInfo) {
+        queueInfo.appendChild(refreshButton);
     }
 });
 
@@ -357,3 +319,9 @@ if (typeof changeLanguage !== 'undefined') {
         updateQueueDisplay();
     };
 }
+
+// Простая функция для принудительного обновления (можно вызвать из консоли)
+window.refreshQueue = function() {
+    console.log('Принудительное обновление очереди...');
+    loadQueueData();
+};
