@@ -4,7 +4,7 @@
 const QUEUE_CONFIG = {
     sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS9GFUc83lUcJoHGqrgmWtSgkIy7LKvNfwXFQwnkC_yvcWqZVSS90tQRVQrPpZZp-PUNZw8hdUut_Oj/pub?output=csv',
     cacheKey: 'ludekard_queue_cache',
-    cacheDuration: 2 * 60 * 1000, // 2 минут
+    cacheDuration: 2 * 60 * 1000, // 5 минут
     refreshInterval: 2 * 60 * 1000 // 2 минуты
 };
 
@@ -94,30 +94,14 @@ class QueueManager {
     }
 
     parseCSV(csvText) {
-    console.log('Парсинг CSV, первая строка:', csvText.split('\n')[0]);
-    
-    const rows = csvText.split('\n').map(row => {
-        // Убираем кавычки и лишние пробелы
-        return row.split(',').map(cell => cell.replace(/"/g, '').trim());
-    });
-    
-    // Простая проверка - ищем "YES" в любой ячейке первой строки
-    let commissionsOpen = false;
-    if (rows[0]) {
-        const firstRow = rows[0];
-        console.log('Поиск YES в первой строке:', firstRow);
-        
-        // Ищем YES в любой ячейке (более гибко)
-        for (let cell of firstRow) {
-            if (cell.toUpperCase() === 'YES') {
-                commissionsOpen = true;
-                console.log('✅ Найден YES в ячейке:', cell);
-                break;
-            }
+        const rows = csvText.split('\n').map(row => row.split(','));
+
+        // Проверяем статус комиссий в ячейке G1 (первая строка, седьмой столбец, индекс 6)
+        let commissionsOpen = false;
+        if (rows[0] && rows[0].length >= 7) {
+            const commissionStatus = rows[0][6] ? rows[0][6].trim() : '';
+            commissionsOpen = commissionStatus.toUpperCase() === 'YES';
         }
-    }
-    
-    console.log('Статус комиссий:', commissionsOpen ? 'ОТКРЫТЫ' : 'ЗАКРЫТЫ');
 
         // Предполагаем, что первая строка - заголовки
         const headers = rows[0] ? rows[0].map(h => h.trim()) : [];
@@ -174,6 +158,9 @@ class QueueManager {
             queueData: data,
             commissionsOpen: commissionsOpen
         };
+        console.log('✅ Загрузка завершена');
+    console.log('Статус комиссий:', this.commissionsOpen);
+    console.log('Заказов:', this.data.length);
     }
 
     normalizeStatus(status) {
