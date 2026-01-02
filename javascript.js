@@ -87,7 +87,7 @@ async function loadQueueData() {
         
         // Обновляем HTML
         updateCommissionStatus();
-        updateQueueDisplay();
+        updateQueueDisplay('working');
         
         // Обновляем время последнего обновления
         updateLastUpdatedTime();
