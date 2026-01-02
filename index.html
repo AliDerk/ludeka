@@ -982,7 +982,7 @@
         <section id="home" class="hero">
             <h1 data-i18n="hero.title">  Ludekard</h1>
                     <div class="art-item" data-category="pony finished">
-                    <img src="head.png" alt="Lu">
+                    <img src="head.avif" alt="Lu">
             <p class="tagline" data-i18n="hero.tagline">Художник, что рисует пони.</p>
             <div class="cta-buttons">
                 <a href="#commissions" class="btn btn-primary" data-i18n="hero.order">Заказать арт</a>
@@ -1018,7 +1018,7 @@
         <!-- Комиссии -->
         <section id="commissions">
             <h2 data-i18n="commissions.title">Заказать арт</h2>
-            <div class="status status-open" data-i18n="commissions.status">✓ Комиссии открыты</div>
+            <div id="commissionsStatus" class="status status-open" data-i18n="commissions.status">✓ Комиссии открыты</div>
             
             <div class="pricing">
                 <div class="price-card">
@@ -1531,6 +1531,7 @@
             
             const formData = new FormData(form);
             
+            
             try {
                 // Отправляем данные на Formspree
                 const response = await fetch(form.action, {
@@ -1541,6 +1542,14 @@
                     }
                 });
                 
+                 if (!commissionsOpen) {
+        const currentLang = document.querySelector('.language-btn.active').getAttribute('data-lang');
+        const errorMessage = currentLang === 'ru' ? 
+            'Комиссии закрыты. Приём заказов временно недоступен.' :
+            'Commissions are closed. Ordering is temporarily unavailable.';
+        alert(errorMessage);
+        return;
+        
                 if (response.ok) {
                     // Показываем модальное окно с благодарностью
                     showModal();
@@ -1656,7 +1665,7 @@
         window.addEventListener('load', () => {
             const bg = document.getElementById('background-image');
             const img = new Image();
-            img.src = 'back.png';
+            img.src = 'back.avif';
             img.onerror = () => {
                 console.log('Файл back.png не найден. Пожалуйста, поместите файл с фоновым изображением в ту же папку, что и сайт.');
                 // Используем фоновое изображение по умолчанию
