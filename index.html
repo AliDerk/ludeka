@@ -1084,598 +1084,7 @@
             </form>
         </section>
 
-        <!-- Очередь заказов (после формы заказа) -->
-        <section id="queue" class="queue-section">
-            <h2 data-i18n="queue.title">Очередь заказов</h2>
-            <p class="queue-subtitle" data-i18n="queue.subtitle">Текущие комиссии и их статус. Данные обновляются автоматически.</p>
-            
-            <!-- Фильтры -->
-            <div class="queue-filters">
-                <button class="queue-filter-btn active" data-filter="all" data-i18n="queue.filter.all">Все заказы</button>
-                <button class="queue-filter-btn" data-filter="working" data-i18n="queue.filter.working">В работе</button>
-                <button class="queue-filter-btn" data-filter="waiting" data-i18n="queue.filter.waiting">Ожидает</button>
-                <button class="queue-filter-btn" data-filter="done" data-i18n="queue.filter.done">Завершены</button>
-                <button class="queue-filter-btn" data-filter="next" data-i18n="queue.filter.next">Следующие в очереди</button>
-            </div>
-            
-            <!-- Информация о загрузке -->
-            <div class="queue-info">
-                <span id="queueCount">0</span> <span data-i18n="queue.orders">заказов в очереди</span>
-                <span class="queue-update-time" data-i18n="queue.updated">Обновлено:</span>
-                <span id="lastUpdated">-</span>
-            </div>
-            
-            <!-- Контейнер для карточек -->
-            <div class="queue-container">
-                <div class="queue-loading" id="queueLoading">
-                    <div class="loading-spinner"></div>
-                    <p data-i18n="queue.loading">Загружаем данные о заказах...</p>
-                </div>
-                <div class="queue-items" id="queueItems">
-                    <!-- Здесь появятся карточки заказов -->
-                </div>
-                
-                <div class="queue-empty" id="queueEmpty" style="display: none;">
-                    <div class="empty-icon">📋</div>
-                    <p data-i18n="queue.empty">Нет активных заказов в очереди</p>
-                </div>
-                
-                <div class="queue-error" id="queueError" style="display: none;">
-                    <div class="error-icon">⚠️</div>
-                    <p data-i18n="queue.error">Не удалось загрузить очередь заказов</p>
-                    <p class="error-details" data-i18n="queue.errorDetails">Проверьте подключение к интернету и попробуйте обновить страницу</p>
-                </div>
-            </div>
-            
-            <!-- Легенда -->
-            <div class="queue-legend">
-                <div class="legend-title" data-i18n="queue.legend">Обозначения:</div>
-                <div class="legend-items">
-                    <div class="legend-item">
-                        <span class="status-indicator working"></span>
-                        <span data-i18n="queue.status.working">В работе</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="status-indicator waiting"></span>
-                        <span data-i18n="queue.status.waiting">Ожидает</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="status-indicator done"></span>
-                        <span data-i18n="queue.status.done">Завершено</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="status-indicator upcoming"></span>
-                        <span data-i18n="queue.status.upcoming">Будет скоро</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-<!--        
-        <section id="shop">
-            <h2 data-i18n="shop.title">Магазин</h2>
-            <p data-i18n="shop.subtitle">Принты, стикеры и другая продукция с моими работами.</p>
-            
-            <div class="products">
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Product 1" style="width:100%; height:200px; object-fit:cover;">
-                    <div class="art-info">
-                        <h3 data-i18n="shop.product1.title">Принт "Твайлайт"</h3>
-                        <p data-i18n="shop.product1.desc">Качественная печать на матовой бумаге</p>
-                        <p><strong>$25</strong></p>
-                    </div>
-                </div>
-                
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Product 2" style="width:100%; height:200px; object-fit:cover;">
-                    <div class="art-info">
-                        <h3 data-i18n="shop.product2.title">Набор стикеров</h3>
-                        <p data-i18n="shop.product2.desc">6 виниловых стикеров с пони</p>
-                        <p><strong>$15</strong></p>
-                    </div>
-                </div>
-            </div>
-        </section>
--->
-
-        <!-- Обо мне -->
-        <section id="about">
-            <h2 data-i18n="about.title">Обо мне</h2>
-            <p data-i18n="about.p1">Привет! Я Ludekard, цифровой художник с более чем 7-летним опытом. Специализируюсь на фан-арте вселенной My Little Pony и создании оригинальных персонажей.</p>
-            <p data-i18n="about.p2">Люблю работать в стиле, сочетающем элементы аниме и западной мультипликации. Вдохновляюсь классическим искусством, природой и, конечно же, магией дружбы!</p>
-            <p data-i18n="about.p3">Инструменты: Photoshop, Clip Studio Paint, Procreate.</p>
-            
-        </section>
-        
-        <!-- Контакты -->
-        <section id="contact">
-            <h2 data-i18n="contact.title">Контакты и соцсети</h2>
-            <p data-i18n="contact.subtitle">Свяжитесь со мной или подпишитесь для получения обновлений!</p>
-            
-            <div class="social-links">
-                <a href="https://x.com/ludekard" class="social-link" data-i18n="contact.twitter">Twitter</a>
-                <a href="https://t.me/+V5PqaqW-v4M3ODky" class="social-link" data-i18n="contact.telegram">Telegram</a>
-                <a href="https://boosty.to/aliderk" class="social-link" data-i18n="contact.boosty">Boosty</a>
-                <a href="https://discord.gg/f3MGf6Y2jV" class="social-link" data-i18n="contact.discord">Discord</a>
-            </div>
-            
-            <p style="margin-top: 2rem;"><span data-i18n="contact.email">Для деловых предложений:</span> <strong>aliluspam@gmail.com</strong></p>
-        </section>
-    </div>
-
-    <!-- Подвал -->
-    <footer>
-        <p class="logo" style="font-size: 1.8rem; margin-bottom: 1rem;">Ludekard</p>
-        <p data-i18n="footer.tagline">Цифровой художник | Фан-арт пони | Оригинальные персонажи</p>
-        
-        <div class="social-links">
-            <a href="https://boosty.to/aliderk" class="social-link" data-i18n="footer.boosty">Подписаться на Boosty</a>
-            <a href="#commissions" class="social-link" data-i18n="footer.order">Заказать комиссию</a>
-        </div>
-        
-        <p class="copyright" data-i18n="footer.copyright">© 2025 Ludekard. Все права на изображения защищены.</p>
-    </footer>
-
-    <script>
-        // Тексты для перевода
-        const translations = {
-            ru: {
-                // Навигация
-                "nav.home": "Главная",
-                "nav.portfolio": "Портфолио",
-                "nav.commissions": "Комиссии",
-                "nav.shop": "Магазин",
-                "nav.about": "Обо мне",
-                "nav.contact": "Контакты",
-                
-                // Герой
-                "hero.title": "Ludekard",
-                "hero.tagline": "Художник, что рисует пони.",
-                "hero.order": "Заказать арт",
-                "hero.gallery": "Смотреть галерею",
-                "hero.shop": "Магазин принтов",
-                
-                // Портфолио
-                "portfolio.title": "Галерея работ",
-                "portfolio.subtitle": "Последние работы и любимые проекты. Используйте фильтры для навигации.",
-                "portfolio.filters.all": "Все работы",
-                "portfolio.filters.pony": "Пони",
-                "portfolio.filters.oc": "Оригинальные персонажи",
-                "portfolio.filters.sketch": "Скетчи",
-                "portfolio.filters.finished": "Законченные работы",
-                "portfolio.art1.title": "Лу",
-                "portfolio.art1.desc": "Цифровая живопись, 2025",
-                "portfolio.art2.title": "Лунная песня",
-                "portfolio.art2.desc": "Мой оригинальный персонаж",
-                "portfolio.art3.title": "Радуга Дэш (скетч)",
-                "portfolio.art3.desc": "Быстрый набросок",
-                "portfolio.art4.title": "Эпплджек на ферме",
-                "portfolio.art4.desc": "Детализированная иллюстрация",
-                
-                // Комиссии
-                "commissions.title": "Заказать арт",
-                "commissions.status": "✓ Комиссии открыты", // ✓ Комиссии открыты 🛇 Комиссии закрыты 
-                "commissions.sketch.title": "Портрет",
-                "commissions.sketch.desc": "Арт по пояс с тенями и освещением",
-                "commissions.sketch.list1": "Черно-белый или простой цвет",
-                "commissions.sketch.list2": "До 3 правок",
-                "commissions.sketch.list3": "Срок: 3-5 дней",
-                "commissions.color.title": "Полноцветный арт",
-                "commissions.color.desc": "Детализированная полноцветная иллюстрация",
-                "commissions.color.list1": "Полная проработка деталей",
-                "commissions.color.list2": "До 3 правок",
-                "commissions.color.list3": "Срок: 7-14 дней",
-                "commissions.scene.title": "Иллюстрация с фоном",
-                "commissions.scene.desc": "Сложная сцена с проработанным окружением",
-                "commissions.scene.list1": "Персонаж в окружении",
-                "commissions.scene.list2": "Сложное освещение",
-                "commissions.scene.list3": "Срок: 14-21 день",
-                "commissions.form.title": "Форма запроса",
-                "commissions.form.name": "Имя / Псевдоним",
-                "commissions.form.namePlaceholder": "Ваше имя",
-                "commissions.form.shortDescription": "Краткое описание заказа",
-                "commissions.form.shortDescriptionPlaceholder": "Опишите вкратце, что вы хотите",
-                "commissions.form.email": "Email для связи",
-                "commissions.form.emailPlaceholder": "email@example.com",
-                "commissions.form.submit": "Отправить запрос",
-                
-                // Модальное окно
-                "modal.title": "Спасибо! ✨",
-                "modal.message": "Ваша заявка отправлена успешно. Я свяжусь с вами в течение 1-2 дней.",
-                "modal.close": "Закрыть",
-                
-                // Магазин
-                "shop.title": "Магазин",
-                "shop.subtitle": "Принты, стикеры и другая продукция с моими работами.",
-                "shop.product1.title": "Принт \"Твайлайт\"",
-                "shop.product1.desc": "Качественная печать на матовой бумаге",
-                "shop.product2.title": "Набор стикеров",
-                "shop.product2.desc": "6 виниловых стикеров с пони",
-                
-                // Очередь заказов
-                "queue.title": "Очередь заказов",
-                "queue.subtitle": "Текущие комиссии и их статус. Данные обновляются автоматически.",
-                "queue.filter.all": "Все заказы",
-                "queue.filter.working": "В работе",
-                "queue.filter.waiting": "Ожидает",
-                "queue.filter.done": "Завершены",
-                "queue.filter.next": "Следующие в очереди",
-                "queue.orders": "заказов в очереди",
-                "queue.updated": "Обновлено:",
-                "queue.loading": "Загружаем данные о заказах...",
-                "queue.empty": "Нет активных заказов в очереди",
-                "queue.error": "Не удалось загрузить очередь заказов",
-                "queue.errorDetails": "Проверьте подключение к интернету и попробуйте обновить страницу",
-                "queue.legend": "Обозначения:",
-                "queue.status.working": "В работе",
-                "queue.status.waiting": "Ожидает",
-                "queue.status.done": "Завершено",
-                "queue.status.upcoming": "Будет скоро",
-                "queue.note": "Данные автоматически обновляются каждые 5 минут. Вы можете редактировать эту очередь в Google Таблице.",
-                
-                // Обо мне
-                "about.title": "Обо мне",
-                "about.p1": "Привет~ Я Лу, цифровой художник что с 2022 года рисует маленьких цветных лошадок~",
-                "about.p2": "Люблю работать в стиле, сочетающем элементы аниме и западной мультипликации. Вдохновляюсь прекрасной музыкой, играми и, конечно же, магией дружбы!",
-                "about.p3": "Инструменты: Krita, DaVinci Resolve.",
-
-                
-                // Контакты
-                "contact.title": "Контакты и соцсети",
-                "contact.subtitle": "Свяжитесь со мной или подпишитесь для получения обновлений!",
-                "contact.twitter": "Twitter",
-                "contact.telegram": "Telegram",
-                "contact.vk": "VK",
-                "contact.boosty": "Boosty",
-                "contact.discord": "Discord",
-                "contact.youtube": "YouTube",
-                "contact.email": "Для деловых предложений:",
-                
-                // Подвал
-                "footer.tagline": "Цифровой художник | Фан-арт пони | Оригинальные персонажи",
-                "footer.boosty": "Подписаться на Boosty",
-                "footer.order": "Заказать комиссию",
-                "footer.copyright": "© 2025 Ludekard. Все права на изображения защищены."
-            },
-            
-            en: {
-                // Navigation
-                "nav.home": "Home",
-                "nav.portfolio": "Portfolio",
-                "nav.commissions": "Commissions",
-                "nav.shop": "Shop",
-                "nav.about": "About",
-                "nav.contact": "Contact",
-                
-                // Hero
-                "hero.title": "Ludekard",
-                "hero.tagline": "A simple artist who draws ponies.",
-                "hero.order": "Order Art",
-                "hero.gallery": "View Gallery",
-                "hero.shop": "Print Shop",
-                
-                // Portfolio
-                "portfolio.title": "Art Gallery",
-                "portfolio.subtitle": "Latest works and favorite projects. Use filters to navigate.",
-                "portfolio.filters.all": "All Works",
-                "portfolio.filters.pony": "Ponies",
-                "portfolio.filters.oc": "Original Characters",
-                "portfolio.filters.sketch": "Sketches",
-                "portfolio.filters.finished": "Finished Works",
-                "portfolio.art1.title": "Lu",
-                "portfolio.art1.desc": "Digital painting, 2025",
-                "portfolio.art2.title": "Moon Song",
-                "portfolio.art2.desc": "My original character",
-                "portfolio.art3.title": "Rainbow Dash (sketch)",
-                "portfolio.art3.desc": "Quick sketch",
-                "portfolio.art4.title": "Applejack on the farm",
-                "portfolio.art4.desc": "Detailed illustration",
-                
-                // Commissions
-                "commissions.title": "Order Art",
-               "commissions.status": "✓ Commissions Open",// ✓ Commissions Open 🛇 Commissions Closed 
-                "commissions.sketch.title": "Portrait",
-                "commissions.sketch.desc": "Bust portrait with shadows and lighting",
-                "commissions.sketch.list1": "Black and white or simple color",
-                "commissions.sketch.list2": "Up to 3 revisions",
-                "commissions.sketch.list3": "Time: 3-5 days",
-                "commissions.color.title": "Full Color Art",
-                "commissions.color.desc": "Detailed full-color illustration",
-                "commissions.color.list1": "Full detail work",
-                "commissions.color.list2": "Up to 3 revisions",
-                "commissions.color.list3": "Time: 7-14 days",
-                "commissions.scene.title": "Illustration with Background",
-                "commissions.scene.desc": "Complex scene with detailed environment",
-                "commissions.scene.list1": "Character in environment",
-                "commissions.scene.list2": "Complex lighting",
-                "commissions.scene.list3": "Time: 14-21 days",
-                "commissions.form.title": "Request Form",
-                "commissions.form.name": "Name / Nickname",
-                "commissions.form.namePlaceholder": "Your name",
-                "commissions.form.shortDescription": "Short order description",
-                "commissions.form.shortDescriptionPlaceholder": "Briefly describe what you want",
-                "commissions.form.email": "Contact Email",
-                "commissions.form.emailPlaceholder": "email@example.com",
-                "commissions.form.submit": "Send Request",
-                
-                // Modal
-                "modal.title": "Thank You! ✨",
-                "modal.message": "Your request has been sent successfully. I will contact you within 1-2 days.",
-                "modal.close": "Close",
-                
-                // Shop
-                "shop.title": "Shop",
-                "shop.subtitle": "Prints, stickers and other products with my artwork.",
-                "shop.product1.title": "Print \"Twilight\"",
-                "shop.product1.desc": "Quality print on matte paper",
-                "shop.product2.title": "Sticker Set",
-                "shop.product2.desc": "6 vinyl stickers with ponies",
-                
-                // Queue
-                "queue.title": "Commission Queue",
-                "queue.subtitle": "Current commissions and their status. Data updates automatically.",
-                "queue.filter.all": "All Orders",
-                "queue.filter.working": "In Progress",
-                "queue.filter.waiting": "Waiting",
-                "queue.filter.done": "Completed",
-                "queue.filter.next": "Upcoming",
-                "queue.orders": "orders in queue",
-                "queue.updated": "Updated:",
-                "queue.loading": "Loading order data...",
-                "queue.empty": "No active orders in queue",
-                "queue.error": "Failed to load commission queue",
-                "queue.errorDetails": "Check your internet connection and try refreshing the page",
-                "queue.legend": "Legend:",
-                "queue.status.working": "In Progress",
-                "queue.status.waiting": "Waiting",
-                "queue.status.done": "Completed",
-                "queue.status.upcoming": "Coming Soon",
-                "queue.note": "Data updates automatically every 5 minutes. You can edit this queue in Google Sheets.",
-                
-                // About
-                "about.title": "About Me",
-                "about.p1": "Hi~ I'm Lu, a digital artist who has been drawing little colorful horses since 2022~.",
-                "about.p2": "I love working in a style that combines elements of anime and Western animation. I am inspired by beautiful music, games, and, of course, the magic of friendship!",
-                "about.p3": "Tools: Krita, DaVinci Resolve.",
-
-                
-                // Contacts
-                "contact.title": "Contacts & Social Media",
-                "contact.subtitle": "Contact me or subscribe for updates!",
-                "contact.twitter": "Twitter",
-                "contact.telegram": "Telegram",
-                "contact.vk": "VK",
-                "contact.boosty": "Boosty",
-                "contact.discord": "Discord",
-                "contact.youtube": "YouTube",
-                "contact.email": "For business inquiries:",
-                
-                // Footer
-                "footer.tagline": "Digital Artist | Pony Fan Art | Original Characters",
-                "footer.boosty": "Subscribe on Boosty",
-                "footer.order": "Order Commission",
-                "footer.copyright": "© 2025 Ludekard. All image rights reserved."
-            }
-        };
-
-        // Мобильное меню
-        const menuBtn = document.getElementById('menuBtn');
-        const navLinks = document.getElementById('navLinks');
-        
-        menuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-        
-        // Фильтрация галереи
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const artItems = document.querySelectorAll('.art-item');
-        
-        filterButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                
-                const filterValue = button.getAttribute('data-filter');
-                
-                artItems.forEach(item => {
-                    if (filterValue === 'all' || item.getAttribute('data-category').includes(filterValue)) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            });
-        });
-        
-        // Функции для модального окна
-        function showModal() {
-            const modal = document.getElementById('thankYouModal');
-            modal.style.display = 'flex';
-            
-            // Обновляем текст модального окна в зависимости от текущего языка
-            updateModalText();
-            
-            // Автоматически закрываем через 5 секунд
-            setTimeout(() => {
-                closeModal();
-            }, 5000);
-        }
-        
-        function closeModal() {
-            const modal = document.getElementById('thankYouModal');
-            modal.style.display = 'none';
-        }
-        
-        function updateModalText() {
-            const modalTitle = document.getElementById('modalTitle');
-            const modalMessage = document.getElementById('modalMessage');
-            const modalClose = document.querySelector('.modal-close');
-            
-            if (modalTitle && modalMessage && modalClose) {
-                modalTitle.textContent = translations[currentLang]["modal.title"];
-                modalMessage.textContent = translations[currentLang]["modal.message"];
-                modalClose.textContent = translations[currentLang]["modal.close"];
-            }
-        }
-        
-        // Обработка формы
-        const form = document.getElementById('commissionForm');
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(form);
-            
-            
-            try {
-                // Отправляем данные на Formspree
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                
-                 if (!commissionsOpen) {
-        const currentLang = document.querySelector('.language-btn.active').getAttribute('data-lang');
-        const errorMessage = currentLang === 'ru' ? 
-            'Комиссии закрыты. Приём заказов временно недоступен.' :
-            'Commissions are closed. Ordering is temporarily unavailable.';
-        alert(errorMessage);
-        return;
-        
-                if (response.ok) {
-                    // Показываем модальное окно с благодарностью
-                    showModal();
-                    // Очищаем форму
-                    form.reset();
-                } else {
-                    // Если ошибка от Formspree
-                    const currentLang = document.querySelector('.language-btn.active').getAttribute('data-lang');
-                    const errorMessage = currentLang === 'en' ? 
-                        'Ошибка при отправке. Пожалуйста, попробуйте еще раз.' :
-                        'Error sending request. Please try again.';
-                    alert(errorMessage);
-                }
-            } catch (error) {
-                // Если ошибка сети
-                const currentLang = document.querySelector('.language-btn.active').getAttribute('data-lang');
-                const errorMessage = currentLang === 'en' ? 
-                    'Ошибка сети. Пожалуйста, проверьте соединение.' :
-                    'Network error. Please check your connection.';
-                alert(errorMessage);
-            }
-        });
-        
-        // Плавная прокрутка
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    navLinks.classList.remove('active');
-                    
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-        
-        // Переключение языка
-        let currentLang = 'en'; // Язык по умолчанию
-        
-        function changeLanguage(lang) {
-            currentLang = lang;
-            
-            // Обновляем активную кнопку языка
-            document.querySelectorAll('.language-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.getAttribute('data-lang') === lang) {
-                    btn.classList.add('active');
-                }
-            });
-            
-            // Обновляем текст страницы
-            document.querySelectorAll('[data-i18n]').forEach(element => {
-                const key = element.getAttribute('data-i18n');
-                if (translations[lang][key]) {
-                    element.textContent = translations[lang][key];
-                }
-            });
-            
-            // Обновляем placeholder у полей формы
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
-                const key = element.getAttribute('data-i18n-placeholder');
-                if (translations[lang][key]) {
-                    element.setAttribute('placeholder', translations[lang][key]);
-                }
-            });
-            
-            // Обновляем опции в select (если они есть)
-            document.querySelectorAll('option[data-i18n]').forEach(element => {
-                const key = element.getAttribute('data-i18n');
-                if (translations[lang][key]) {
-                    element.textContent = translations[lang][key];
-                }
-            });
-            
-            // Обновляем текст в модальном окне
-            updateModalText();
-            
-            // Обновляем атрибут lang у html
-            document.documentElement.lang = lang;
-            
-            // Плавное изменение контента
-            document.body.style.opacity = '0.7';
-            setTimeout(() => {
-                document.body.style.opacity = '1';
-            }, 100);
-        }
-        
-        // Обработчики для кнопок переключения языка
-        document.querySelectorAll('.language-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const lang = button.getAttribute('data-lang');
-                changeLanguage(lang);
-                
-                // Сохраняем выбор в localStorage
-                localStorage.setItem('preferredLanguage', lang);
-            });
-        });
-        
-        // При загрузке страницы проверяем сохраненный язык
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('preferredLanguage') || 'en';
-            changeLanguage(savedLang);
-        });
-        
-        // Если файл back.png не найден, показываем сообщение в консоли
-        window.addEventListener('load', () => {
-            const bg = document.getElementById('background-image');
-            const img = new Image();
-            img.src = 'back.avif';
-            img.onerror = () => {
-                console.log('Файл back.png не найден. Пожалуйста, поместите файл с фоновым изображением в ту же папку, что и сайт.');
-                // Используем фоновое изображение по умолчанию
-                bg.style.backgroundImage = 'url("https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80")';
-            };
-        });
-        
-        // Закрытие модального окна при клике вне его
-        window.addEventListener('click', (event) => {
-            const modal = document.getElementById('thankYouModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        });
-        
-        // ===== ОЧЕРЕДЬ ЗАКАЗОВ =====
+             // ===== ОЧЕРЕДЬ ЗАКАЗОВ =====
         
         // Конфигурация
         const QUEUE_CONFIG = {
@@ -1684,6 +1093,9 @@
             cacheDuration: 5 * 60 * 1000, // 5 минут
             refreshInterval: 2 * 60 * 1000 // 2 минуты
         };
+        
+        // Глобальная переменная для статуса комиссий
+        let commissionsOpen = true; // По умолчанию открыты
         
         // Класс управления очередью
         class QueueManager {
@@ -1768,63 +1180,88 @@
             }
             
             parseCSV(csvText) {
-                const rows = csvText.split('\n').map(row => row.split(','));
+                // Разделяем строки
+                const rows = csvText.split('\n');
                 
-                // Предполагаем, что первая строка - заголовки
-                const headers = rows[0] ? rows[0].map(h => h.trim()) : [];
+                // Извлекаем статус комиссий из ячейки G1 (первая строка, 7-й столбец)
+                let commissionsStatusValue = 'YES'; // Значение по умолчанию
+                if (rows[0]) {
+                    const firstRowColumns = rows[0].split(',');
+                    if (firstRowColumns.length > 6) {
+                        commissionsStatusValue = firstRowColumns[6].trim().toUpperCase();
+                    }
+                }
                 
-                // Маппинг заголовков (предполагаемая структура)
-                const headerMap = {
-                    'Номер': 'position',
-                    'Клиент': 'client',
-                    'Описание': 'description',
-                    'Статус': 'status',
-                    'Срок': 'deadline',
-                    'Цена': 'price',
-                    'Приоритет': 'priority'
-                };
+                // Обновляем глобальную переменную статуса комиссий
+                this.updateCommissionsStatus(commissionsStatusValue);
                 
-                // Парсим строки
+                // Парсим данные, начиная со 2-й строки
+                const dataRows = rows.slice(1); // Пропускаем первую строку со статусом
                 const data = [];
                 
-                for (let i = 1; i < rows.length; i++) {
-                    if (!rows[i] || rows[i].length < 2) continue;
+                for (let i = 0; i < dataRows.length; i++) {
+                    if (!dataRows[i] || dataRows[i].trim() === '') continue;
                     
-                    const row = {};
+                    const columns = dataRows[i].split(',');
+                    if (columns.length < 2) continue;
                     
-                    for (let j = 0; j < headers.length; j++) {
-                        const header = headers[j];
-                        const value = rows[i][j] ? rows[i][j].trim() : '';
-                        
-                        if (headerMap[header]) {
-                            row[headerMap[header]] = value;
-                        } else {
-                            // Если заголовок не распознан, сохраняем как есть
-                            row[header] = value;
-                        }
-                    }
-                    
-                    // Нормализуем статус
-                    if (row.status) {
-                        row.status = this.normalizeStatus(row.status);
-                    } else {
-                        row.status = 'waiting';
-                    }
-                    
-                    // Если есть позиция, конвертируем в число
-                    if (row.position) {
-                        row.position = parseInt(row.position) || i;
-                    } else {
-                        row.position = i;
-                    }
+                    // Создаем объект заказа
+                    const order = {
+                        position: parseInt(columns[0]) || i + 1,
+                        client: columns[1] ? columns[1].trim() : '',
+                        description: columns[2] ? columns[2].trim() : '',
+                        status: this.normalizeStatus(columns[3] ? columns[3].trim() : ''),
+                        deadline: columns[4] ? columns[4].trim() : '',
+                        price: columns[5] ? columns[5].trim() : '',
+                        priority: columns[6] ? columns[6].trim() : ''
+                    };
                     
                     // Добавляем только если есть клиент
-                    if (row.client && row.client.trim() !== '') {
-                        data.push(row);
+                    if (order.client && order.client !== '') {
+                        data.push(order);
                     }
                 }
                 
                 return data;
+            }
+            
+            updateCommissionsStatus(statusValue) {
+                const statusUpper = statusValue.toUpperCase().trim();
+                
+                // YES варианты
+                if (statusUpper === 'YES' || 
+                    statusUpper === 'ДА' || 
+                    statusUpper === 'OPEN' ||
+                    statusUpper === 'ОТКРЫТО' ||
+                    statusUpper === 'TRUE' ||
+                    statusUpper === '1') {
+                    commissionsOpen = true;
+                } 
+                // NO варианты
+                else if (statusUpper === 'NO' || 
+                    statusUpper === 'НЕТ' || 
+                    statusUpper === 'CLOSED' ||
+                    statusUpper === 'ЗАКРЫТО' ||
+                    statusUpper === 'FALSE' ||
+                    statusUpper === '0') {
+                    commissionsOpen = false;
+                }
+                // По умолчанию - открыты
+                else {
+                    commissionsOpen = true;
+                }
+                
+                // Обновляем отображение статуса комиссий на странице
+                const commissionsStatusElement = document.getElementById('commissionsStatus');
+                if (commissionsStatusElement) {
+                    if (commissionsOpen) {
+                        commissionsStatusElement.className = 'status status-open';
+                        commissionsStatusElement.textContent = translations[currentLang]["commissions.status.open"];
+                    } else {
+                        commissionsStatusElement.className = 'status status-closed';
+                        commissionsStatusElement.textContent = translations[currentLang]["commissions.status.closed"];
+                    }
+                }
             }
             
             normalizeStatus(status) {
@@ -1866,7 +1303,10 @@
             applyFilter() {
                 switch (this.currentFilter) {
                     case 'all':
-                        this.filteredData = [...this.data];
+                        // Только активные (без done), первые 5
+                        this.filteredData = this.data
+                            .filter(item => item.status !== 'done')
+                            .slice(0, 5);
                         break;
                     case 'working':
                         this.filteredData = this.data.filter(item => item.status === 'working');
@@ -1929,7 +1369,7 @@
                     `<div class="queue-price">${item.price}</div>` : '';
                 
                 return `
-                    <div class="queue-card ${item.status}">
+                    <div class="queue-card ${item.status}>
                         <div class="queue-card-header">
                             <div class="queue-position">${item.position}</div>
                             <div class="queue-client">${item.client}</div>
@@ -2019,6 +1459,58 @@
         
         // Инициализация очереди при загрузке страницы
         let queueManager = null;
+
+        // Обновляем обработку формы заказа
+        const form = document.getElementById('commissionForm');
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // Проверяем статус комиссий перед отправкой
+                if (!commissionsOpen) {
+                    const currentLang = document.querySelector('.language-btn.active').getAttribute('data-lang');
+                    const errorMessage = currentLang === 'ru' ? 
+                        'Комиссии закрыты. Приём заказов временно недоступен.' :
+                        'Commissions are closed. Ordering is temporarily unavailable.';
+                    alert(errorMessage);
+                    return;
+                }
+                
+                const formData = new FormData(form);
+                
+                try {
+                    // Отправляем данные на Formspree
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        // Показываем модальное окно с благодарностью
+                        showModal();
+                        // Очищаем форму
+                        form.reset();
+                    } else {
+                        // Если ошибка от Formspree
+                        const currentLang = document.querySelector('.language-btn.active').getAttribute('data-lang');
+                        const errorMessage = currentLang === 'ru' ? 
+                            'Ошибка при отправке. Пожалуйста, попробуйте еще раз.' :
+                            'Error sending request. Please try again.';
+                        alert(errorMessage);
+                    }
+                } catch (error) {
+                    // Если ошибка сети
+                    const currentLang = document.querySelector('.language-btn.active').getAttribute('data-lang');
+                    const errorMessage = currentLang === 'ru' ? 
+                        'Ошибка сети. Пожалуйста, проверьте соединение.' :
+                        'Network error. Please check your connection.';
+                    alert(errorMessage);
+                }
+            });
+        }
         
         document.addEventListener('DOMContentLoaded', () => {
             const savedLang = localStorage.getItem('preferredLanguage') || 'ru';
