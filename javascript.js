@@ -2,7 +2,7 @@
 
 // Конфигурация
 const QUEUE_CONFIG = {
-    sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS9GFUc83lUcJoHGqrgmWtSgkIy7LKvNfwXFQwnkC_yvcWqZVSS90tQRVQrPpZZp-PUNZw8hdUut_Oj/pub?output=csv',
+    sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS9GFUc83lUcJoHGqrgmWtSgkIy7LKvNfwXFQwnkC_yvcWqZVSS90tQRVQrPpZZp-PUNZw8hdUut_Oj/pub?gid=0&single=true&output=csv',
     cacheKey: 'ludekard_queue_cache',
     cacheDuration: 3 * 60 * 1000, // 3 минуты
     refreshInterval: 2 * 60 * 1000 // 2 минуты
