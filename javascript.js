@@ -122,7 +122,7 @@ function updateCommissionStatus() {
 }
 
 // Функция для обновления отображения очереди в HTML
-function updateQueueDisplay() {
+function updateQueueDisplay('working') {
     const container = document.getElementById('queueItems');
     const countElement = document.getElementById('queueCount');
     const loadingElement = document.getElementById('queueLoading');
