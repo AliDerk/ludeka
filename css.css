@@ -337,7 +337,10 @@ background-image: id="image/back.png";
     color: #d0c6ff;
     font-size: 0.9rem;
 }
-
+.status-closed {
+    background-color: rgba(204, 46, 46, 0.2); /* Красный цвет */
+    color: #cc2e2e;
+}
 .status-indicator {
     width: 12px;
     height: 12px;
