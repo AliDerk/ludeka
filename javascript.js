@@ -4,428 +4,356 @@
 const QUEUE_CONFIG = {
     sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS9GFUc83lUcJoHGqrgmWtSgkIy7LKvNfwXFQwnkC_yvcWqZVSS90tQRVQrPpZZp-PUNZw8hdUut_Oj/pub?output=csv',
     cacheKey: 'ludekard_queue_cache',
-    cacheDuration: 5 * 60 * 1000, // 5 минут
+    cacheDuration: 3 * 60 * 1000, // 3 минуты
     refreshInterval: 2 * 60 * 1000 // 2 минуты
 };
 
-// Класс управления очередью
-class QueueManager {
-    constructor() {
-        this.data = [];
-        this.filteredData = [];
-        this.currentFilter = 'all';
-        this.isLoading = false;
-        
-        this.initElements();
-        this.setupEventListeners();
-    }
+// Глобальные переменные для хранения данных
+let queueData = [];
+let commissionsStatus = false; // false = закрыты, true = открыты
+
+// Функция для загрузки данных из Google Таблицы
+async function loadQueueData() {
+    console.log('🔄 Загрузка данных из таблицы...');
     
-    initElements() {
-        this.elements = {
-            container: document.getElementById('queueItems'),
-            loading: document.getElementById('queueLoading'),
-            empty: document.getElementById('queueEmpty'),
-            error: document.getElementById('queueError'),
-            count: document.getElementById('queueCount'),
-            lastUpdated: document.getElementById('lastUpdated')
-        };
-    }
-    
-    setupEventListeners() {
-        // Фильтры
-        document.querySelectorAll('.queue-filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => this.setFilter(btn.dataset.filter));
-        });
-        
-        // Автообновление
-        setInterval(() => this.loadQueue(), QUEUE_CONFIG.refreshInterval);
-    }
-    
-    async loadQueue() {
-        if (this.isLoading) return;
-        
-        this.isLoading = true;
-        this.showLoading();
-        
-        try {
-            // Проверяем кэш
-            const cached = this.getCachedData();
-            if (cached && Date.now() - cached.timestamp < QUEUE_CONFIG.cacheDuration) {
-                console.log('Используем кэшированные данные');
-                this.processData(cached.data);
-                return;
-            }
-            
-            // Загружаем новые данные
-            console.log('Загружаем данные из Google Sheets...');
-            const csvData = await this.fetchCSV(QUEUE_CONFIG.sheetUrl);
-            const parsedData = this.parseCSV(csvData);
-            
-            // Сохраняем в кэш
-            this.cacheData(parsedData);
-            
-            // Обрабатываем данные
-            this.processData(parsedData);
-            
-        } catch (error) {
-            console.error('Ошибка загрузки очереди:', error);
-            this.showError();
-            
-            // Пробуем загрузить из кэша, даже если он устарел
-            const cached = this.getCachedData();
-            if (cached) {
-                console.log('Используем устаревшие кэшированные данные');
-                this.processData(cached.data);
-            }
-        } finally {
-            this.isLoading = false;
-        }
-    }
-    
-    async fetchCSV(url) {
-        const response = await fetch(url);
+    try {
+        // Загружаем CSV
+        const response = await fetch(QUEUE_CONFIG.sheetUrl);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return await response.text();
-    }
-    
-    parseCSV(csvText) {
+        const csvText = await response.text();
+        
+        // Парсим CSV
         const rows = csvText.split('\n').map(row => row.split(','));
         
-        // Предполагаем, что первая строка - заголовки
-        const headers = rows[0] ? rows[0].map(h => h.trim()) : [];
+        // Проверяем статус комиссий в G1 (первая строка, седьмой столбец)
+        let commissionsOpen = false;
+        if (rows[0] && rows[0].length >= 7) {
+            const commissionStatus = rows[0][6] ? rows[0][6].trim() : '';
+            commissionsOpen = commissionStatus.toUpperCase() === 'YES';
+            console.log('Статус комиссий в G1:', commissionStatus, '->', commissionsOpen ? 'ОТКРЫТЫ' : 'ЗАКРЫТЫ');
+        }
         
-        // Маппинг заголовков (предполагаемая структура)
-        const headerMap = {
-            'Номер': 'position',
-            'Клиент': 'client',
-            'Описание': 'description',
-            'Статус': 'status',
-            'Срок': 'deadline',
-            'Цена': 'price',
-            'Приоритет': 'priority'
-        };
+        // Сохраняем статус в глобальную переменную
+        commissionsStatus = commissionsOpen;
         
-        // Парсим строки
+        // Парсим данные заказов (начиная со второй строки)
         const data = [];
         
         for (let i = 1; i < rows.length; i++) {
             if (!rows[i] || rows[i].length < 2) continue;
             
-            const row = {};
-            
-            for (let j = 0; j < headers.length; j++) {
-                const header = headers[j];
-                const value = rows[i][j] ? rows[i][j].trim() : '';
-                
-                if (headerMap[header]) {
-                    row[headerMap[header]] = value;
-                } else {
-                    // Если заголовок не распознан, сохраняем как есть
-                    row[header] = value;
-                }
-            }
+            // Создаем объект заказа
+            const order = {
+                position: rows[i][0] ? rows[i][0].trim() : i,
+                client: rows[i][1] ? rows[i][1].trim() : '',
+                description: rows[i][2] ? rows[i][2].trim() : '',
+                status: rows[i][3] ? rows[i][3].trim().toLowerCase() : 'waiting',
+                deadline: rows[i][4] ? rows[i][4].trim() : '',
+                price: rows[i][5] ? rows[i][5].trim() : ''
+            };
             
             // Нормализуем статус
-            if (row.status) {
-                row.status = this.normalizeStatus(row.status);
+            if (order.status.includes('working')) {
+                order.status = 'working';
+            } else if (order.status.includes('upcom') || order.status.includes('скоро') || order.status.includes('ckopo')) {
+                order.status = 'upcoming';
+            } else if (order.status.includes('done') || order.status.includes('заверш') || order.status.includes('готов')) {
+                order.status = 'done';
             } else {
-                row.status = 'waiting';
+                order.status = 'waiting';
             }
             
-            // Если есть позиция, конвертируем в число
-            if (row.position) {
-                row.position = parseInt(row.position) || i;
-            } else {
-                row.position = i;
-            }
+            // Преобразуем позицию в число
+            order.position = parseInt(order.position) || i;
             
-            // Добавляем только если есть клиент
-            if (row.client && row.client.trim() !== '') {
-                data.push(row);
+            // Добавляем заказ, если есть клиент
+            if (order.client && order.client.trim() !== '') {
+                data.push(order);
             }
         }
         
-        return data;
-    }
-    
-    normalizeStatus(status) {
-        const statusLower = status.toLowerCase();
+        // Сохраняем данные в глобальную переменную
+        queueData = data;
         
-        if (statusLower.includes('работа') || statusLower.includes('working') || statusLower.includes('в процессе')) {
-            return 'working';
-        } else if (statusLower.includes('заверш') || statusLower.includes('done') || statusLower.includes('готов')) {
-            return 'done';
-        } else if (statusLower.includes('ожида') || statusLower.includes('waiting') || statusLower.includes('в очереди')) {
-            return 'waiting';
-        } else if (statusLower.includes('скоро') || statusLower.includes('upcoming') || statusLower.includes('будет')) {
-            return 'upcoming';
-        }
+        console.log(`✅ Загружено ${data.length} заказов`);
         
-        return 'waiting';
-    }
-    
-    processData(data) {
-        this.data = data;
-        this.applyFilter();
-        this.updateCount();
-        this.updateLastUpdated();
-        this.render();
-    }
-    
-    setFilter(filter) {
-        this.currentFilter = filter;
+        // Обновляем HTML
+        updateCommissionStatus();
+        updateQueueDisplay();
         
-        // Обновляем активную кнопку
-        document.querySelectorAll('.queue-filter-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.filter === filter);
-        });
+        // Обновляем время последнего обновления
+        updateLastUpdatedTime();
         
-        this.applyFilter();
-        this.render();
-    }
-    
-    applyFilter() {
-        switch (this.currentFilter) {
-            applyFilter() {
-    switch (this.currentFilter) {
-        case 'all':
-            // Только активные (без done)
-            this.filteredData = this.data
-                    .filter(item => item.status !== 'done')
-                    .slice(0, 5);
-            break;
-            case 'working':
-                this.filteredData = this.data.filter(item => item.status === 'working');
-                break;
-            case 'waiting':
-                this.filteredData = this.data.filter(item => item.status === 'waiting');
-                break;
-            case 'done':
-                this.filteredData = this.data.filter(item => item.status === 'done');
-                break;
-            case 'next':
-                // Ближайшие 3 заказа в очереди (не завершенные)
-                this.filteredData = this.data
-                    .filter(item => item.status !== 'done')
-                    .slice(0, 3);
-                break;
-            default:
-                this.filteredData = [...this.data];
+        // Сохраняем в кэш
+        saveToCache(data, commissionsOpen);
+        
+    } catch (error) {
+        console.error('❌ Ошибка загрузки данных:', error);
+        showError();
+        
+        // Пробуем загрузить из кэша
+        const cached = loadFromCache();
+        if (cached) {
+            console.log('Используем кэшированные данные');
+            queueData = cached.data;
+            commissionsStatus = cached.commissionsOpen;
+            updateCommissionStatus();
+            updateQueueDisplay();
         }
     }
-    
-    updateCount() {
-        if (this.elements.count) {
-            this.elements.count.textContent = this.data.length;
-        }
+}
+
+// Функция для обновления статуса комиссий в HTML
+function updateCommissionStatus() {
+    const statusElement = document.getElementById('commissionStatus');
+    if (!statusElement) {
+        console.error('Элемент commissionStatus не найден');
+        return;
     }
     
-    updateLastUpdated() {
-        if (this.elements.lastUpdated) {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const dateString = now.toLocaleDateString();
-            this.elements.lastUpdated.textContent = `${dateString} ${timeString}`;
-        }
+    if (commissionsStatus) {
+        // Комиссии открыты
+        statusElement.className = 'status status-open';
+        statusElement.textContent = '✓ Комиссии открыты';
+        statusElement.setAttribute('data-i18n', 'commissions.status.open');
+    } else {
+        // Комиссии закрыты
+        statusElement.className = 'status status-closed';
+        statusElement.textContent = '✗ Комиссии закрыты';
+        statusElement.setAttribute('data-i18n', 'commissions.status.closed');
     }
     
-    render() {
-        if (!this.elements.container) return;
-        
-        if (this.filteredData.length === 0) {
-            this.showEmpty();
-            return;
-        }
-        
-        this.hideAllMessages();
-        
-        // Сортируем по позиции
-        const sortedData = [...this.filteredData].sort((a, b) => a.position - b.position);
-        
-        const cardsHTML = sortedData.map(item => this.createCardHTML(item)).join('');
-        this.elements.container.innerHTML = cardsHTML;
+    console.log('Обновлен статус комиссий:', commissionsStatus ? 'ОТКРЫТЫ' : 'ЗАКРЫТЫ');
+}
+
+// Функция для обновления отображения очереди в HTML
+function updateQueueDisplay() {
+    const container = document.getElementById('queueItems');
+    const countElement = document.getElementById('queueCount');
+    const loadingElement = document.getElementById('queueLoading');
+    const emptyElement = document.getElementById('queueEmpty');
+    
+    if (!container) {
+        console.error('Элемент queueItems не найден');
+        return;
     }
     
-    createCardHTML(item) {
-        const statusText = this.getStatusText(item.status);
-        const deadlineHTML = item.deadline ? 
-            `<div class="queue-deadline">📅 ${item.deadline}</div>` : '';
-        
-        const priceHTML = item.price ? 
-            `<div class="queue-price">${item.price}</div>` : '';
-        
-        return `
-            <div class="queue-card ${item.status}">
-                <div class="queue-card-header">
-                    <div class="queue-position">${item.position}</div>
-                    <div class="queue-client">${item.client}</div>
-                </div>
-                <div class="queue-description">${item.description || 'Без описания'}</div>
-                <div class="queue-details">
-                    <div class="queue-status ${item.status}">${statusText}</div>
-                    <div class="queue-meta">
-                        ${deadlineHTML}
-                        ${priceHTML}
-                    </div>
+    // Скрываем загрузку
+    if (loadingElement) {
+        loadingElement.style.display = 'none';
+    }
+    
+    // Обновляем счетчик
+    if (countElement) {
+        countElement.textContent = queueData.length;
+    }
+    
+    // Проверяем, есть ли данные
+    if (queueData.length === 0) {
+        if (emptyElement) {
+            emptyElement.style.display = 'block';
+        }
+        container.innerHTML = '';
+        return;
+    }
+    
+    // Скрываем сообщение о пустой очереди
+    if (emptyElement) {
+        emptyElement.style.display = 'none';
+    }
+    
+    // Сортируем по позиции
+    const sortedData = [...queueData].sort((a, b) => a.position - b.position);
+    
+    // Создаем HTML для карточек
+    const cardsHTML = sortedData.map(item => createQueueCardHTML(item)).join('');
+    container.innerHTML = cardsHTML;
+    
+    // Добавляем обработчики для фильтров
+    setupQueueFilters();
+}
+
+// Функция для создания HTML карточки заказа
+function createQueueCardHTML(item) {
+    const statusText = getStatusText(item.status);
+    const deadlineHTML = item.deadline && item.deadline !== '--' ? 
+        `<div class="queue-deadline">📅 ${item.deadline}</div>` : '';
+    
+    const priceHTML = item.price && item.price !== '--' ? 
+        `<div class="queue-price">${item.price}</div>` : '';
+    
+    return `
+        <div class="queue-card ${item.status}">
+            <div class="queue-card-header">
+                <div class="queue-position">${item.position}</div>
+                <div class="queue-client">${item.client}</div>
+            </div>
+            <div class="queue-description">${item.description || 'Без описания'}</div>
+            <div class="queue-details">
+                <div class="queue-status ${item.status}">${statusText}</div>
+                <div class="queue-meta">
+                    ${deadlineHTML}
+                    ${priceHTML}
                 </div>
             </div>
-        `;
+        </div>
+    `;
+}
+
+// Функция для получения текста статуса
+function getStatusText(status) {
+    const statusMap = {
+        'working': 'В работе',
+        'waiting': 'Ожидает',
+        'done': 'Завершено',
+        'upcoming': 'Будет скоро'
+    };
+    return statusMap[status] || status;
+}
+
+// Функция для настройки фильтров очереди
+function setupQueueFilters() {
+    const filterButtons = document.querySelectorAll('.queue-filter-btn');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Убираем активный класс у всех кнопок
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Добавляем активный класс текущей кнопке
+            this.classList.add('active');
+            
+            // Применяем фильтр
+            applyQueueFilter(this.dataset.filter);
+        });
+    });
+}
+
+// Функция для применения фильтра
+function applyQueueFilter(filterType) {
+    const container = document.getElementById('queueItems');
+    if (!container || queueData.length === 0) return;
+    
+    let filteredData = [...queueData];
+    
+    switch (filterType) {
+        case 'all':
+            // Все активные заказы (без завершенных)
+            filteredData = queueData.filter(item => item.status !== 'done');
+            break;
+        case 'working':
+            filteredData = queueData.filter(item => item.status === 'working');
+            break;
+        case 'waiting':
+            filteredData = queueData.filter(item => item.status === 'waiting');
+            break;
+        case 'done':
+            filteredData = queueData.filter(item => item.status === 'done');
+            break;
+        case 'next':
+            // Ближайшие 3 заказа (не завершенные)
+            filteredData = queueData
+                .filter(item => item.status !== 'done')
+                .slice(0, 3);
+            break;
     }
     
-    getStatusText(status) {
-        const statusMap = {
-            'working': 'В работе',
-            'waiting': 'Ожидает',
-            'done': 'Завершено',
-            'upcoming': 'Будет скоро'
+    // Сортируем
+    const sortedData = [...filteredData].sort((a, b) => a.position - b.position);
+    
+    // Обновляем отображение
+    const cardsHTML = sortedData.map(item => createQueueCardHTML(item)).join('');
+    container.innerHTML = cardsHTML;
+}
+
+// Функция для обновления времени последнего обновления
+function updateLastUpdatedTime() {
+    const lastUpdatedElement = document.getElementById('lastUpdated');
+    if (lastUpdatedElement) {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const dateString = now.toLocaleDateString();
+        lastUpdatedElement.textContent = `${dateString} ${timeString}`;
+    }
+}
+
+// Функция для показа ошибки
+function showError() {
+    const errorElement = document.getElementById('queueError');
+    const loadingElement = document.getElementById('queueLoading');
+    
+    if (loadingElement) {
+        loadingElement.style.display = 'none';
+    }
+    
+    if (errorElement) {
+        errorElement.style.display = 'block';
+    }
+}
+
+// Функция для сохранения в кэш
+function saveToCache(data, commissionsOpen) {
+    try {
+        const cache = {
+            timestamp: Date.now(),
+            data: data,
+            commissionsOpen: commissionsOpen
         };
-        return statusMap[status] || status;
+        localStorage.setItem(QUEUE_CONFIG.cacheKey, JSON.stringify(cache));
+    } catch (error) {
+        console.warn('Не удалось сохранить в кэш:', error);
     }
-    
-    // Сообщения
-    showLoading() {
-        this.hideAllMessages();
-        if (this.elements.loading) {
-            this.elements.loading.style.display = 'block';
-        }
-        if (this.elements.container) {
-            this.elements.container.innerHTML = '';
-        }
-    }
-    
-    showEmpty() {
-        this.hideAllMessages();
-        if (this.elements.empty) {
-            this.elements.empty.style.display = 'block';
-        }
-        if (this.elements.container) {
-            this.elements.container.innerHTML = '';
-        }
-    }
-    
-    showError() {
-        this.hideAllMessages();
-        if (this.elements.error) {
-            this.elements.error.style.display = 'block';
-        }
-        if (this.elements.container) {
-            this.elements.container.innerHTML = '';
-        }
-    }
-    
-    hideAllMessages() {
-        if (this.elements.loading) this.elements.loading.style.display = 'none';
-        if (this.elements.empty) this.elements.empty.style.display = 'none';
-        if (this.elements.error) this.elements.error.style.display = 'none';
-    }
-    
-    // Кэширование
-    cacheData(data) {
-        try {
-            const cache = {
-                timestamp: Date.now(),
-                data: data
-            };
-            localStorage.setItem(QUEUE_CONFIG.cacheKey, JSON.stringify(cache));
-        } catch (error) {
-            console.warn('Не удалось сохранить данные в кэш:', error);
-        }
-    }
-    
-    getCachedData() {
-        try {
-            const cached = localStorage.getItem(QUEUE_CONFIG.cacheKey);
-            return cached ? JSON.parse(cached) : null;
-        } catch (error) {
-            console.warn('Не удалось загрузить данные из кэша:', error);
+}
+
+// Функция для загрузки из кэша
+function loadFromCache() {
+    try {
+        const cached = localStorage.getItem(QUEUE_CONFIG.cacheKey);
+        if (!cached) return null;
+        
+        const cache = JSON.parse(cached);
+        
+        // Проверяем, не устарели ли данные
+        if (Date.now() - cache.timestamp > QUEUE_CONFIG.cacheDuration) {
             return null;
         }
+        
+        return cache;
+    } catch (error) {
+        console.warn('Не удалось загрузить из кэша:', error);
+        return null;
     }
 }
 
-// Переводы для очереди (добавьте в объект translations)
-const queueTranslations = {
-    ru: {
-        "queue.title": "Очередь заказов",
-        "queue.subtitle": "Текущие комиссии и их статус. Данные обновляются автоматически.",
-        "queue.filter.all": "Все заказы",
-        "queue.filter.working": "В работе",
-        "queue.filter.waiting": "Ожидает",
-        "queue.filter.done": "Завершены",
-        "queue.filter.next": "Следующие в очереди",
-        "queue.orders": "заказов в очереди",
-        "queue.updated": "Обновлено:",
-        "queue.loading": "Загружаем данные о заказах...",
-        "queue.empty": "Нет активных заказов в очереди",
-        "queue.error": "Не удалось загрузить очередь заказов",
-        "queue.errorDetails": "Проверьте подключение к интернету и попробуйте обновить страницу",
-        "queue.legend": "Обозначения:",
-        "queue.status.working": "В работе",
-        "queue.status.waiting": "Ожидает",
-        "queue.status.done": "Завершено",
-        "queue.status.upcoming": "Будет скоро",
-        "queue.note": "Данные автоматически обновляются каждые 5 минут. Вы можете редактировать эту очередь в Google Таблице."
-    },
-    en: {
-        "queue.title": "Commission Queue",
-        "queue.subtitle": "Current commissions and their status. Data updates automatically.",
-        "queue.filter.all": "All Orders",
-        "queue.filter.working": "In Progress",
-        "queue.filter.waiting": "Waiting",
-        "queue.filter.done": "Completed",
-        "queue.filter.next": "Upcoming",
-        "queue.orders": "orders in queue",
-        "queue.updated": "Updated:",
-        "queue.loading": "Loading order data...",
-        "queue.empty": "No active orders in queue",
-        "queue.error": "Failed to load commission queue",
-        "queue.errorDetails": "Check your internet connection and try refreshing the page",
-        "queue.legend": "Legend:",
-        "queue.status.working": "In Progress",
-        "queue.status.waiting": "Waiting",
-        "queue.status.done": "Completed",
-        "queue.status.upcoming": "Coming Soon",
-        "queue.note": "Data updates automatically every 5 minutes. You can edit this queue in Google Sheets."
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Страница загружена, инициализируем очередь...');
+    
+    // Загружаем данные
+    loadQueueData();
+    
+    // Настраиваем автообновление
+    setInterval(loadQueueData, QUEUE_CONFIG.refreshInterval);
+    
+    // Принудительное обновление при клике на секцию очереди
+    const queueSection = document.getElementById('queue');
+    if (queueSection) {
+        queueSection.addEventListener('click', function(e) {
+            if (e.target.classList.contains('queue-link')) {
+                loadQueueData();
+            }
+        });
     }
-};
-
-// Добавьте переводы в основной объект translations
-Object.assign(translations.ru, queueTranslations.ru);
-Object.assign(translations.en, queueTranslations.en);
-
-// Инициализация очереди при загрузке страницы
-document.addEventListener('DOMContentLoaded', () => {
-    const savedLang = localStorage.getItem('preferredLanguage') || 'ru';
-    changeLanguage(savedLang);
-    
-    // Если сохранён фильтр "all", и он показывает завершённые,
-    // можно сбросить на активный
-    const savedFilter = localStorage.getItem('queueFilter');
-    if (!savedFilter || savedFilter === 'all') {
-        localStorage.setItem('queueFilter', 'active'); // или оставить 'all'
-    }
-    
-    // Инициализируем очередь
-    queueManager = new QueueManager();
-    queueManager.loadQueue();
-});
-    
-    // Обновляем переводы для очереди
-    updateQueueTranslations();
 });
 
-function updateQueueTranslations() {
-    // Эта функция будет вызвана при смене языка
-    if (queueManager) {
-        queueManager.render();
-    }
-}
-
-// Добавьте вызов updateQueueTranslations в функцию changeLanguage
-// В существующей функции changeLanguage добавьте:
-function changeLanguage(lang) {
-    // ... существующий код ...
-    updateQueueTranslations(); // Добавьте эту строку
+// Интеграция с системой перевода
+if (typeof changeLanguage !== 'undefined') {
+    const originalChangeLanguage = changeLanguage;
+    window.changeLanguage = function(lang) {
+        originalChangeLanguage(lang);
+        updateCommissionStatus();
+        updateQueueDisplay();
+    };
 }
