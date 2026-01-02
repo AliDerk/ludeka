@@ -9,6 +9,7 @@ const QUEUE_CONFIG = {
 // Глобальные переменные для хранения данных
 let queueData = [];
 let commissionsStatus = false;
+let currentFilter = 'all'; // Добавляем переменную для хранения текущего фильтра
 
 // Функция для загрузки данных из Google Таблицы
 async function loadQueueData() {
@@ -29,8 +30,15 @@ async function loadQueueData() {
         let commissionsOpen = false;
         if (rows[0] && rows[0].length >= 7) {
             const commissionStatus = rows[0][6] ? rows[0][6].trim() : '';
-            commissionsOpen = commissionStatus.toUpperCase() === 'YES';
-            console.log('Статус комиссий в G1:', commissionStatus, '->', commissionsOpen ? 'ОТКРЫТЫ' : 'ЗАКРЫТЫ');
+            // Ищем "YES" в любой ячейке первой строки (более гибкий подход)
+            for (let cell of rows[0]) {
+                if (cell && cell.trim().toUpperCase() === 'YES') {
+                    commissionsOpen = true;
+                    console.log('✅ Найден YES в ячейке:', cell);
+                    break;
+                }
+            }
+            console.log('Статус комиссий:', commissionsOpen ? 'ОТКРЫТЫ' : 'ЗАКРЫТЫ');
         }
         
         // Сохраняем статус в глобальную переменную
@@ -149,15 +157,17 @@ function updateQueueDisplay() {
         emptyElement.style.display = 'none';
     }
     
-    // Сортируем по позиции
-    const sortedData = [...queueData].sort((a, b) => a.position - b.position);
+    // ВОТ ИСПРАВЛЕНИЕ: при первом отображении сразу применяем фильтр "all"
+    applyQueueFilter('all');
     
-    // Создаем HTML для карточек
-    const cardsHTML = sortedData.map(item => createQueueCardHTML(item)).join('');
-    container.innerHTML = cardsHTML;
-    
-    // Добавляем обработчики для фильтров
-    setupQueueFilters();
+    // Активируем кнопку "all"
+    const filterButtons = document.querySelectorAll('.queue-filter-btn');
+    filterButtons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.filter === 'all') {
+            btn.classList.add('active');
+        }
+    });
 }
 
 // Функция для создания HTML карточки заказа
@@ -210,8 +220,11 @@ function setupQueueFilters() {
             // Добавляем активный класс текущей кнопке
             this.classList.add('active');
             
+            // Сохраняем текущий фильтр
+            currentFilter = this.dataset.filter;
+            
             // Применяем фильтр
-            applyQueueFilter(this.dataset.filter);
+            applyQueueFilter(currentFilter);
         });
     });
 }
@@ -219,13 +232,15 @@ function setupQueueFilters() {
 // Функция для применения фильтра
 function applyQueueFilter(filterType) {
     const container = document.getElementById('queueItems');
+    const emptyElement = document.getElementById('queueEmpty');
+    
     if (!container || queueData.length === 0) return;
     
-    let filteredData = [...queueData];
+    let filteredData = [];
     
     switch (filterType) {
         case 'all':
-            // Все активные заказы (без завершенных)
+            // Все заказы кроме завершенных (ВОТ ИСПРАВЛЕНИЕ)
             filteredData = queueData.filter(item => item.status !== 'done');
             break;
         case 'working':
@@ -243,9 +258,24 @@ function applyQueueFilter(filterType) {
                 .filter(item => item.status !== 'done')
                 .slice(0, 3);
             break;
+        default:
+            filteredData = [...queueData];
     }
     
-    // Сортируем
+    // Если после фильтрации нет данных, показываем сообщение
+    if (filteredData.length === 0) {
+        if (emptyElement) {
+            emptyElement.style.display = 'block';
+        }
+        container.innerHTML = '';
+        return;
+    } else {
+        if (emptyElement) {
+            emptyElement.style.display = 'none';
+        }
+    }
+    
+    // Сортируем по позиции
     const sortedData = [...filteredData].sort((a, b) => a.position - b.position);
     
     // Обновляем отображение
@@ -288,6 +318,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Настраиваем автообновление
     setInterval(loadQueueData, QUEUE_CONFIG.refreshInterval);
     
+    // Настраиваем обработчики фильтров
+    setupQueueFilters();
+    
     // Кнопка ручного обновления (опционально)
     const refreshButton = document.createElement('button');
     refreshButton.textContent = '🔄 Обновить';
@@ -316,7 +349,8 @@ if (typeof changeLanguage !== 'undefined') {
     window.changeLanguage = function(lang) {
         originalChangeLanguage(lang);
         updateCommissionStatus();
-        updateQueueDisplay();
+        // При смене языка применяем текущий фильтр
+        applyQueueFilter(currentFilter);
     };
 }
 
