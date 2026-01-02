@@ -44,6 +44,7 @@ class QueueManager {
     }
 
     async loadQueue() {
+        console.log('🔄 Загрузка очереди...');
         if (this.isLoading) return;
 
         this.isLoading = true;
@@ -157,6 +158,9 @@ class QueueManager {
             queueData: data,
             commissionsOpen: commissionsOpen
         };
+        console.log('✅ Загрузка завершена');
+    console.log('Статус комиссий:', this.commissionsOpen);
+    console.log('Заказов:', this.data.length);
     }
 
     normalizeStatus(status) {
