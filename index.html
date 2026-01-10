@@ -308,6 +308,155 @@
             transform: translateY(-3px);
         }
 
+        /* Секция референсов */
+        .references-section {
+            position: relative;
+        }
+
+        .character-info {
+            background: linear-gradient(145deg, rgba(40, 35, 70, 0.8), rgba(25, 22, 45, 0.8));
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #4a4580;
+        }
+
+        .character-info h3 {
+            margin-bottom: 1rem;
+            color: #9d7cff;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .info-item {
+            background: rgba(30, 27, 50, 0.6);
+            padding: 1.2rem;
+            border-radius: 8px;
+            border-left: 4px solid #7b68ee;
+        }
+
+        .info-item h4 {
+            color: #c5b3ff;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .info-item p {
+            color: #d0c6ff;
+            font-size: 0.95rem;
+        }
+
+        .references-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .reference-item {
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            background-color: rgba(40, 35, 70, 0.5);
+            border: 1px solid #3a3560;
+            position: relative;
+        }
+
+        .reference-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            border-color: #6a5acd;
+        }
+
+        .reference-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s;
+        }
+
+        .reference-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .reference-info {
+            padding: 1.2rem;
+        }
+
+        .reference-category {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(106, 90, 205, 0.2);
+            color: #9d7cff;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .reference-info h4 {
+            color: #e0d6ff;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .reference-info p {
+            color: #c5b3ff;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .reference-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .reference-tag {
+            background: rgba(74, 69, 128, 0.3);
+            color: #b19cff;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .reference-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+        }
+
+        .reference-filter-btn {
+            padding: 0.6rem 1.2rem;
+            background-color: rgba(60, 55, 100, 0.5);
+            border: 1px solid #4a4580;
+            color: #d0c6ff;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-filter-btn:hover, .reference-filter-btn.active {
+            background-color: #6a5acd;
+            color: white;
+        }
+
+        .download-all {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #2a2a4a;
+        }
+
         /* Галерея */
         .gallery {
             display: grid;
@@ -919,6 +1068,14 @@
                 font-size: 2rem;
             }
 
+            .references-gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
             .queue-items {
                 grid-template-columns: 1fr;
             }
@@ -963,9 +1120,9 @@
         <button class="mobile-menu-btn" id="menuBtn">☰</button>
         <div class="nav-links" id="navLinks">
             <a href="#home" data-i18n="nav.home">Главная</a>
+            <a href="references.html" data-i18n="nav.references">Референсы</a>
             <a href="#portfolio" data-i18n="nav.portfolio">Портфолио</a>
             <a href="#commissions" data-i18n="nav.commissions">Комиссии</a>
-<!--            <a href="#shop" data-i18n="nav.shop">Магазин</a> -->
             <a href="#about" data-i18n="nav.about">Обо мне</a>
             <a href="#contact" data-i18n="nav.contact">Контакты</a>
 
@@ -973,8 +1130,8 @@
                 <button class="language-btn active" data-lang="ru">
                     Русский
                 </button>
-               <button class="language-btn" data-lang="en"> 
-                English </button>
+                <button class="language-btn" data-lang="en"> 
+                    English
                 </button>
             </div>
         </div>
@@ -984,42 +1141,18 @@
     <div class="container">
         <!-- Герой секция -->
         <section id="home" class="hero">
-            <h1 data-i18n="hero.title">  Ludekard</h1>
-                    <div class="art-item" data-category="pony finished">
-                    <img src="head.avif" alt="Lu">
+            <h1 data-i18n="hero.title">Ludekard</h1>
+            <div class="art-item" data-category="pony finished">
+                <img src="head.avif" alt="Lu">
+            </div>
             <p class="tagline" data-i18n="hero.tagline">Художник, что рисует пони.</p>
             <div class="cta-buttons">
                 <a href="#commissions" class="btn btn-primary" data-i18n="hero.order">Заказать арт</a>
-                <a href="#portfolio" class="btn btn-secondary" data-i18n="hero.gallery">Смотреть галерею</a>
-<!--                <a href="#shop" class="btn btn-secondary" data-i18n="hero.shop">Магазин принтов</a> -->
+                <a href="#references" class="btn btn-secondary" data-i18n="hero.references">Смотреть референсы</a>
             </div>
         </section>
 
-        <!-- Портфолио 
-        <section id="portfolio">
-            <h2 data-i18n="portfolio.title">Галерея работ</h2>
-            <p data-i18n="portfolio.subtitle">Последние работы и любимые проекты. Используйте фильтры для навигации.</p>
-
-            <div class="filters">
-                <button class="filter-btn active" data-filter="all" data-i18n="portfolio.filters.all">Все работы</button>
-                <button class="filter-btn" data-filter="pony" data-i18n="portfolio.filters.pony">Пони</button>
-                <button class="filter-btn" data-filter="oc" data-i18n="portfolio.filters.oc">Оригинальные персонажи</button>
-                <button class="filter-btn" data-filter="sketch" data-i18n="portfolio.filters.sketch">Скетчи</button>
-                <button class="filter-btn" data-filter="finished" data-i18n="portfolio.filters.finished">Законченные работы</button>
-            </div>
-
-            <div class="gallery">
-                <div class="art-item" data-category="pony finished">
-                    <img src="https://derpicdn.net/img/view/2025/12/7/3724614__safe_artist-colon-lu-dot-de_princess+luna_alicorn_pony_g4_blushing_drink_energy+drink_monster+energy_simple+background_solo_white+background.png" alt="Artwork 1">
-                    <div class="art-info">
-                        <h3 data-i18n="portfolio.art1.title">Лу</h3>
-                    </div>
-                </div>
-            </div>
-        </section> -->
-
         <!-- Комиссии -->
-      <!-- Комиссии -->
         <section id="commissions">
             <h2 data-i18n="commissions.title">Комиссии</h2>
             <div id="commissionStatus" class="status status-open" data-i18n="commissions.status.open">✓ Комиссии открыты</div>
@@ -1156,40 +1289,12 @@
             </div>
         </section>
 
-<!--        
-        <section id="shop">
-            <h2 data-i18n="shop.title">Магазин</h2>
-            <p data-i18n="shop.subtitle">Принты, стикеры и другая продукция с моими работами.</p>
-            
-            <div class="products">
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Product 1" style="width:100%; height:200px; object-fit:cover;">
-                    <div class="art-info">
-                        <h3 data-i18n="shop.product1.title">Принт "Твайлайт"</h3>
-                        <p data-i18n="shop.product1.desc">Качественная печать на матовой бумаге</p>
-                        <p><strong>$25</strong></p>
-                    </div>
-                </div>
-                
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Product 2" style="width:100%; height:200px; object-fit:cover;">
-                    <div class="art-info">
-                        <h3 data-i18n="shop.product2.title">Набор стикеров</h3>
-                        <p data-i18n="shop.product2.desc">6 виниловых стикеров с пони</p>
-                        <p><strong>$15</strong></p>
-                    </div>
-                </div>
-            </div>
-        </section>
--->
-
         <!-- Обо мне -->
         <section id="about">
             <h2 data-i18n="about.title">Обо мне</h2>
             <p data-i18n="about.p1">Привет! Я Ludekard, цифровой художник с более чем 7-летним опытом. Специализируюсь на фан-арте вселенной My Little Pony и создании оригинальных персонажей.</p>
             <p data-i18n="about.p2">Люблю работать в стиле, сочетающем элементы аниме и западной мультипликации. Вдохновляюсь классическим искусством, природой и, конечно же, магией дружбы!</p>
             <p data-i18n="about.p3">Инструменты: Photoshop, Clip Studio Paint, Procreate.</p>
-
         </section>
 
         <!-- Контакты -->
@@ -1214,9 +1319,9 @@
         <p data-i18n="footer.tagline">Цифровой художник | Фан-арт пони | Оригинальные персонажи</p>
 
         <div class="social-links">
-            <a href="#" class="social-link" data-i18n="footer.boosty">Подписаться на Boosty</a>
             <a href="https://boosty.to/aliderk" class="social-link" data-i18n="footer.boosty">Подписаться на Boosty</a>
             <a href="#commissions" class="social-link" data-i18n="footer.order">Заказать комиссию</a>
+            <a href="#references" class="social-link" data-i18n="footer.references">Референсы</a>
         </div>
 
         <p class="copyright" data-i18n="footer.copyright">© 2025 Ludekard. Все права на изображения защищены.</p>
@@ -1228,9 +1333,9 @@
             ru: {
                 // Навигация
                 "nav.home": "Главная",
+                "nav.references": "Референсы",
                 "nav.portfolio": "Портфолио",
                 "nav.commissions": "Комиссии",
-                "nav.shop": "Магазин",
                 "nav.about": "Обо мне",
                 "nav.contact": "Контакты",
 
@@ -1238,25 +1343,41 @@
                 "hero.title": "Ludekard",
                 "hero.tagline": "Художник, что рисует пони.",
                 "hero.order": "Заказать арт",
+                "hero.references": "Смотреть референсы",
                 "hero.gallery": "Смотреть галерею",
-                "hero.shop": "Магазин принтов",
 
-                // Портфолио
-                "portfolio.title": "Галерея работ",
-                "portfolio.subtitle": "Последние работы и любимые проекты. Используйте фильтры для навигации.",
-                "portfolio.filters.all": "Все работы",
-                "portfolio.filters.pony": "Пони",
-                "portfolio.filters.oc": "Оригинальные персонажи",
-                "portfolio.filters.sketch": "Скетчи",
-                "portfolio.filters.finished": "Законченные работы",
-                "portfolio.art1.title": "Лу",
-                "portfolio.art1.desc": "Цифровая живопись, 2025",
-                "portfolio.art2.title": "Лунная песня",
-                "portfolio.art2.desc": "Мой оригинальный персонаж",
-                "portfolio.art3.title": "Радуга Дэш (скетч)",
-                "portfolio.art3.desc": "Быстрый набросок",
-                "portfolio.art4.title": "Эпплджек на ферме",
-                "portfolio.art4.desc": "Детализированная иллюстрация",
+                // Референсы
+                "references.title": "Референсы персонажей",
+                "references.subtitle": "Здесь собраны референсы моих персонажей для заказа арта.",
+                "references.character1.title": "Лу'Нья (Lu'Nya)",
+                "references.character1.description": "Главный OC персонаж, аликорн лунной магии с уникальной цветовой гаммой.",
+                "references.character1.species": "Аликорн (крылатый единорог)",
+                "references.character1.special": "Лунная грива, звёздные отметины, градиентные крылья",
+                "references.character1.personality": "Спокойная, мечтательная, немного загадочная",
+                "references.info.species": "Вид",
+                "references.info.colors": "Основные цвета",
+                "references.info.special": "Особые приметы",
+                "references.info.personality": "Характер",
+                "references.filters.all": "Все",
+                "references.filters.fullbody": "Фулбоди",
+                "references.filters.expressions": "Эмоции",
+                "references.filters.details": "Детали",
+                "references.filters.color": "Цветовая схема",
+                "references.items.fullbody.title": "Основная поза",
+                "references.items.fullbody.desc": "Полный вид персонажа спереди с разметкой пропорций",
+                "references.items.expressions.title": "Набор эмоций",
+                "references.items.expressions.desc": "Основные выражения лица: радость, грусть, удивление, злость",
+                "references.items.details.title": "Детализация",
+                "references.items.details.desc": "Крупные планы: грива, хвост, крылья, копыта",
+                "references.items.color.title": "Цветовая палитра",
+                "references.items.color.desc": "Основные, дополнительные и акцентные цвета персонажа",
+                "references.items.side.title": "Вид сбоку",
+                "references.items.side.desc": "Профиль персонажа с разметкой анатомических особенностей",
+                "references.items.accessories.title": "Аксессуары",
+                "references.items.accessories.desc": "Варианты украшений и дополнительных элементов",
+                "references.download": "Скачать все референсы одним архивом:",
+                "references.downloadButton": "Скачать ZIP (5MB)",
+                "references.note": "При заказе арта вы можете использовать эти референсы как основу",
 
                 // Комиссии
                 "commissions.title": "Заказать арт",
@@ -1287,14 +1408,6 @@
                 "modal.message": "Ваша заявка отправлена успешно. Я свяжусь с вами в течение 1-2 дней.",
                 "modal.close": "Закрыть",
 
-                // Магазин
-                "shop.title": "Магазин",
-                "shop.subtitle": "Принты, стикеры и другая продукция с моими работами.",
-                "shop.product1.title": "Принт \"Твайлайт\"",
-                "shop.product1.desc": "Качественная печать на матовой бумаге",
-                "shop.product2.title": "Набор стикеров",
-                "shop.product2.desc": "6 виниловых стикеров с пони",
-
                 // Очередь заказов
                 "queue.title": "Очередь заказов",
                 "queue.subtitle": "Текущие комиссии и их статус. Данные обновляются автоматически.",
@@ -1322,31 +1435,29 @@
                 "about.p2": "Люблю работать в стиле, сочетающем элементы аниме и западной мультипликации. Вдохновляюсь прекрасной музыкой, играми и, конечно же, магией дружбы!",
                 "about.p3": "Инструменты: Krita, DaVinci Resolve.",
 
-
                 // Контакты
                 "contact.title": "Контакты и соцсети",
                 "contact.subtitle": "Свяжитесь со мной или подпишитесь для получения обновлений!",
                 "contact.twitter": "Twitter",
                 "contact.telegram": "Telegram",
-                "contact.vk": "VK",
                 "contact.boosty": "Boosty",
                 "contact.discord": "Discord",
-                "contact.youtube": "YouTube",
                 "contact.email": "Для деловых предложений:",
 
                 // Подвал
                 "footer.tagline": "Цифровой художник | Фан-арт пони | Оригинальные персонажи",
                 "footer.boosty": "Подписаться на Boosty",
                 "footer.order": "Заказать комиссию",
+                "footer.references": "Референсы персонажей",
                 "footer.copyright": "© 2025 Ludekard. Все права на изображения защищены."
             },
 
             en: {
                 // Navigation
                 "nav.home": "Home",
+                "nav.references": "Референсы",
                 "nav.portfolio": "Portfolio",
                 "nav.commissions": "Commissions",
-                "nav.shop": "Shop",
                 "nav.about": "About",
                 "nav.contact": "Contact",
 
@@ -1354,25 +1465,11 @@
                 "hero.title": "Ludekard",
                 "hero.tagline": "A simple artist who draws ponies.",
                 "hero.order": "Order Art",
+                "hero.references": "Смотреть референсы",
                 "hero.gallery": "View Gallery",
-                "hero.shop": "Print Shop",
 
-                // Portfolio
-                "portfolio.title": "Art Gallery",
-                "portfolio.subtitle": "Latest works and favorite projects. Use filters to navigate.",
-                "portfolio.filters.all": "All Works",
-                "portfolio.filters.pony": "Ponies",
-                "portfolio.filters.oc": "Original Characters",
-                "portfolio.filters.sketch": "Sketches",
-                "portfolio.filters.finished": "Finished Works",
-                "portfolio.art1.title": "Lu",
-                "portfolio.art1.desc": "Digital painting, 2025",
-                "portfolio.art2.title": "Moon Song",
-                "portfolio.art2.desc": "My original character",
-                "portfolio.art3.title": "Rainbow Dash (sketch)",
-                "portfolio.art3.desc": "Quick sketch",
-                "portfolio.art4.title": "Applejack on the farm",
-                "portfolio.art4.desc": "Detailed illustration",
+                // В разделе hero:
+
 
                 // Commissions
                 "commissions.title": "Order Art",
@@ -1388,11 +1485,6 @@
                 "commissions.fullbody.list1": "· Full detail work",
                 "commissions.fullbody.list2": "· Up to 3 revisions",
                 "commissions.fullbody.list3": "· Time: 7-14 days",
-                "commissions.scene.title": "Illustration with Background",
-                "commissions.scene.desc": "Complex scene with detailed environment",
-                "commissions.scene.list1": "· Character in environment",
-                "commissions.scene.list2": "· Complex lighting",
-                "commissions.scene.list3": "· Time: 14-21 days",
                 "commissions.form.title": "Request Form",
                 "commissions.form.title2": "or DM me on Discord (@Ludeka)",
                 "commissions.form.name": "Name / Nickname",
@@ -1407,14 +1499,6 @@
                 "modal.title": "Thank You! ✨",
                 "modal.message": "Your request has been sent successfully. I will contact you within 1-2 days.",
                 "modal.close": "Close",
-
-                // Shop
-                "shop.title": "Shop",
-                "shop.subtitle": "Prints, stickers and other products with my artwork.",
-                "shop.product1.title": "Print \"Twilight\"",
-                "shop.product1.desc": "Quality print on matte paper",
-                "shop.product2.title": "Sticker Set",
-                "shop.product2.desc": "6 vinyl stickers with ponies",
 
                 // Queue
                 "queue.title": "Commission Queue",
@@ -1443,22 +1527,20 @@
                 "about.p2": "I love working in a style that combines elements of anime and Western animation. I am inspired by beautiful music, games, and, of course, the magic of friendship!",
                 "about.p3": "Tools: Krita, DaVinci Resolve.",
 
-
                 // Contacts
                 "contact.title": "Contacts & Social Media",
                 "contact.subtitle": "Contact me or subscribe for updates!",
                 "contact.twitter": "Twitter",
                 "contact.telegram": "Telegram",
-                "contact.vk": "VK",
                 "contact.boosty": "Boosty",
                 "contact.discord": "Discord",
-                "contact.youtube": "YouTube",
                 "contact.email": "For business inquiries:",
 
                 // Footer
                 "footer.tagline": "Digital Artist | Pony Fan Art | Original Characters",
                 "footer.boosty": "Subscribe on Boosty",
                 "footer.order": "Order Commission",
+                "footer.references": "References",
                 "footer.copyright": "© 2025 Ludekard. All image rights reserved."
             }
         };
@@ -1469,27 +1551,6 @@
 
         menuBtn.addEventListener('click', () => {
             navLinks.classList.toggle('active');
-        });
-
-        // Фильтрация галереи
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const artItems = document.querySelectorAll('.art-item');
-
-        filterButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-
-                const filterValue = button.getAttribute('data-filter');
-
-                artItems.forEach(item => {
-                    if (filterValue === 'all' || item.getAttribute('data-category').includes(filterValue)) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            });
         });
 
         // Функции для модального окна
@@ -1584,7 +1645,7 @@
         });
 
         // Переключение языка
-        let currentLang = 'en'; // Язык по умолчанию
+        let currentLang = 'ru'; // Язык по умолчанию
 
         function changeLanguage(lang) {
             currentLang = lang;
@@ -1655,9 +1716,47 @@
 
         // При загрузке страницы проверяем сохраненный язык
         document.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('preferredLanguage') || 'en';
+            const savedLang = localStorage.getItem('preferredLanguage') || 'ru';
             changeLanguage(savedLang);
+            
+            // Инициализируем фильтрацию референсов
+            initReferencesFilter();
         });
+
+        // Фильтрация референсов
+        function initReferencesFilter() {
+            const filterButtons = document.querySelectorAll('.reference-filter-btn');
+            const referenceItems = document.querySelectorAll('.reference-item');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Убираем активный класс у всех кнопок
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Добавляем активный класс текущей кнопке
+                    button.classList.add('active');
+
+                    const filterValue = button.getAttribute('data-filter');
+
+                    referenceItems.forEach(item => {
+                        const categories = item.getAttribute('data-category').split(' ');
+                        
+                        if (filterValue === 'all' || categories.includes(filterValue)) {
+                            item.style.display = 'block';
+                            setTimeout(() => {
+                                item.style.opacity = '1';
+                                item.style.transform = 'translateY(0)';
+                            }, 10);
+                        } else {
+                            item.style.opacity = '0';
+                            item.style.transform = 'translateY(20px)';
+                            setTimeout(() => {
+                                item.style.display = 'none';
+                            }, 300);
+                        }
+                    });
+                });
+            });
+        }
 
         // Если файл back.png не найден, показываем сообщение в консоли
         window.addEventListener('load', () => {
