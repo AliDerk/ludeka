@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Референсы персонажей | Ludekard</title>
+    <meta name="description" content="Референсы персонажей Ludekard для заказа арта">
+    
+    <!-- Иконки сайта -->
+    <link rel="icon" href="iconlu.png" type="image/png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0a0a14;
+            color: #f0f0f5;
+            line-height: 1.6;
+        }
+
+        #background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('back.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #9d7cff, #6a5acd);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            color: #c5b3ff;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.8rem 2rem;
+            background-color: #7b68ee;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #6a5acd;
+            transform: translateY(-2px);
+        }
+
+        /* Секция референсов */
+        .references-section {
+            margin-top: 2rem;
+        }
+
+        .character-info {
+            background: linear-gradient(145deg, rgba(40, 35, 70, 0.8), rgba(25, 22, 45, 0.8));
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #4a4580;
+        }
+
+        .character-info h3 {
+            margin-bottom: 1rem;
+            color: #9d7cff;
+            font-size: 1.8rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .info-item {
+            background: rgba(30, 27, 50, 0.6);
+            padding: 1.2rem;
+            border-radius: 8px;
+            border-left: 4px solid #7b68ee;
+        }
+
+        .info-item h4 {
+            color: #c5b3ff;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .info-item p {
+            color: #d0c6ff;
+            font-size: 0.95rem;
+        }
+
+        /* Галерея референсов */
+        .reference-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+
+        .reference-filter-btn {
+            padding: 0.6rem 1.2rem;
+            background-color: rgba(60, 55, 100, 0.5);
+            border: 1px solid #4a4580;
+            color: #d0c6ff;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .reference-filter-btn:hover,
+        .reference-filter-btn.active {
+            background-color: #6a5acd;
+            color: white;
+        }
+
+        .references-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .reference-item {
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            background-color: rgba(40, 35, 70, 0.5);
+            border: 1px solid #3a3560;
+        }
+
+        .reference-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            border-color: #6a5acd;
+        }
+
+        .reference-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .reference-info {
+            padding: 1.2rem;
+        }
+
+        .reference-category {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(106, 90, 205, 0.2);
+            color: #9d7cff;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .reference-info h4 {
+            color: #e0d6ff;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .reference-info p {
+            color: #c5b3ff;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .reference-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .reference-tag {
+            background: rgba(74, 69, 128, 0.3);
+            color: #b19cff;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .download-section {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #2a2a4a;
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(90deg, #7b68ee, #6a5acd);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.3s;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(106, 90, 205, 0.4);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .references-gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .reference-filters {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Фоновое изображение -->
+    <div id="background-image"></div>
+
+    <div class="container">
+        <!-- Шапка -->
+        <div class="header">
+            <h1>Референсы персонажей</h1>
+            <p>Здесь собраны все референсы моих персонажей для заказа арта. Используйте фильтры для навигации.</p>
+            <a href="index.html" class="back-button">← Вернуться на главную</a>
+        </div>
+
+        <!-- Информация о персонаже -->
+        <div class="character-info">
+            <h3>Лу'Нья (Lu'Nya)</h3>
+            <p>Главный OC персонаж, аликорн лунной магии с уникальной цветовой гаммой.</p>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <h4>Вид</h4>
+                    <p>Аликорн (крылатый единорог)</p>
+                </div>
+                <div class="info-item">
+                    <h4>Основные цвета</h4>
+                    <p>Фиолетовый (#8A2BE2), Синий (#4169E1), Серебряный (#C0C0C0)</p>
+                </div>
+                <div class="info-item">
+                    <h4>Особые приметы</h4>
+                    <p>Лунная грива, звёздные отметины, градиентные крылья</p>
+                </div>
+                <div class="info-item">
+                    <h4>Характер</h4>
+                    <p>Спокойная, мечтательная, немного загадочная</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Фильтры -->
+        <div class="reference-filters">
+            <button class="reference-filter-btn active" data-filter="all">Все</button>
+            <button class="reference-filter-btn" data-filter="fullbody">Фулбоди</button>
+            <button class="reference-filter-btn" data-filter="expressions">Эмоции</button>
+            <button class="reference-filter-btn" data-filter="details">Детали</button>
+            <button class="reference-filter-btn" data-filter="color">Цветовая схема</button>
+        </div>
+
+        <!-- Галерея референсов -->
+        <div class="references-gallery" id="referencesGallery">
+            <!-- Референс 1 -->
+            <div class="reference-item" data-category="fullbody color">
+                <img src="reference_fullbody.jpg" alt="Fullbody Reference" onerror="this.src='https://via.placeholder.com/300x200/8A2BE2/FFFFFF?text=Fullbody+Reference'">
+                <div class="reference-info">
+                    <span class="reference-category">Фулбоди</span>
+                    <h4>Основная поза</h4>
+                    <p>Полный вид персонажа спереди с разметкой пропорций</p>
+                    <div class="reference-tags">
+                        <span class="reference-tag">пропорции</span>
+                        <span class="reference-tag">цвета</span>
+                        <span class="reference-tag">основная поза</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Референс 2 -->
+            <div class="reference-item" data-category="expressions">
+                <img src="reference_expressions.jpg" alt="Expressions Reference" onerror="this.src='https://via.placeholder.com/300x200/4169E1/FFFFFF?text=Expressions'">
+                <div class="reference-info">
+                    <span class="reference-category">Эмоции</span>
+                    <h4>Набор эмоций</h4>
+                    <p>Основные выражения лица: радость, грусть, удивление, злость</p>
+                    <div class="reference-tags">
+                        <span class="reference-tag">лицо</span>
+                        <span class="reference-tag">эмоции</span>
+                        <span class="reference-tag">выражения</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Референс 3 -->
+            <div class="reference-item" data-category="details">
+                <img src="reference_details.jpg" alt="Details Reference" onerror="this.src='https://via.placeholder.com/300x200/9370DB/FFFFFF?text=Details'">
+                <div class="reference-info">
+                    <span class="reference-category">Детали</span>
+                    <h4>Детализация</h4>
+                    <p>Крупные планы: грива, хвост, крылья, копыта</p>
+                    <div class="reference-tags">
+                        <span class="reference-tag">грива</span>
+                        <span class="reference-tag">крылья</span>
+                        <span class="reference-tag">детали</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Референс 4 -->
+            <div class="reference-item" data-category="color">
+                <img src="reference_color.jpg" alt="Color Reference" onerror="this.src='https://via.placeholder.com/300x200/6A5ACD/FFFFFF?text=Color+Scheme'">
+                <div class="reference-info">
+                    <span class="reference-category">Цвета</span>
+                    <h4>Цветовая палитра</h4>
+                    <p>Основные, дополнительные и акцентные цвета персонажа</p>
+                    <div class="reference-tags">
+                        <span class="reference-tag">палитра</span>
+                        <span class="reference-tag">градиенты</span>
+                        <span class="reference-tag">цвета</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Референс 5 -->
+            <div class="reference-item" data-category="fullbody">
+                <img src="reference_side.jpg" alt="Side View Reference" onerror="this.src='https://via.placeholder.com/300x200/483D8B/FFFFFF?text=Side+View'">
+                <div class="reference-info">
+                    <span class="reference-category">Фулбоди</span>
+                    <h4>Вид сбоку</h4>
+                    <p>Профиль персонажа с разметкой анатомических особенностей</p>
+                    <div class="reference-tags">
+                        <span class="reference-tag">профиль</span>
+                        <span class="reference-tag">анатомия</span>
+                        <span class="reference-tag">пропорции</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Референс 6 -->
+            <div class="reference-item" data-category="details">
+                <img src="reference_accessories.jpg" alt="Accessories Reference" onerror="this.src='https://via.placeholder.com/300x200/9400D3/FFFFFF?text=Accessories'">
+                <div class="reference-info">
+                    <span class="reference-category">Детали</span>
+                    <h4>Аксессуары</h4>
+                    <p>Варианты украшений и дополнительных элементов</p>
+                    <div class="reference-tags">
+                        <span class="reference-tag">украшения</span>
+                        <span class="reference-tag">аксессуары</span>
+                        <span class="reference-tag">детали</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Секция загрузки -->
+        <div class="download-section">
+            <h3>Скачать все референсы одним архивом</h3>
+            <p style="margin: 1rem 0; color: #c5b3ff;">Архив содержит все изображения в высоком разрешении</p>
+            <a href="#" class="download-btn">Скачать ZIP архив (5MB)</a>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: #888;">
+                При заказе арта вы можете использовать эти референсы как основу для вашего персонажа
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Фильтрация референсов
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.reference-filter-btn');
+            const referenceItems = document.querySelectorAll('.reference-item');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Убираем активный класс у всех кнопок
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Добавляем активный класс текущей кнопке
+                    button.classList.add('active');
+
+                    const filterValue = button.getAttribute('data-filter');
+
+                    referenceItems.forEach(item => {
+                        const categories = item.getAttribute('data-category').split(' ');
+                        
+                        if (filterValue === 'all' || categories.includes(filterValue)) {
+                            item.style.display = 'block';
+                            setTimeout(() => {
+                                item.style.opacity = '1';
+                                item.style.transform = 'translateY(0)';
+                            }, 10);
+                        } else {
+                            item.style.opacity = '0';
+                            item.style.transform = 'translateY(20px)';
+                            setTimeout(() => {
+                                item.style.display = 'none';
+                            }, 300);
+                        }
+                    });
+                });
+            });
+
+            // Заглушка для скачивания
+            const downloadBtn = document.querySelector('.download-btn');
+            downloadBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Здесь будет ссылка для скачивания архива с референсами. Замените href на вашу реальную ссылку.');
+            });
+        });
+    </script>
+</body>
+</html>
