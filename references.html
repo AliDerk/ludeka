@@ -38,6 +38,77 @@
             z-index: -1;
         }
 
+        /* Навигация */
+        nav {
+            background-color: rgba(20, 20, 35, 0.95);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #6a5acd;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #9d7cff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #d0c6ff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+            background-color: rgba(109, 90, 205, 0.2);
+        }
+
+        /* Языковой переключатель */
+        .language-switcher {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .language-btn {
+            background: rgba(60, 55, 100, 0.7);
+            color: #d0c6ff;
+            border: 1px solid #4a4580;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .language-btn:hover {
+            background: #6a5acd;
+            color: white;
+        }
+
+        .language-btn.active {
+            background: #7b68ee;
+            color: white;
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -127,36 +198,12 @@
         }
 
         /* Галерея референсов */
-        .reference-filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-            margin: 2rem 0;
-            justify-content: center;
-        }
-
-        .reference-filter-btn {
-            padding: 0.6rem 1.2rem;
-            background-color: rgba(60, 55, 100, 0.5);
-            border: 1px solid #4a4580;
-            color: #d0c6ff;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-
-        .reference-filter-btn:hover,
-        .reference-filter-btn.active {
-            background-color: #6a5acd;
-            color: white;
-        }
-
         .references-gallery {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1.5rem;
             margin-top: 1.5rem;
+            align-items: start;
         }
 
         .reference-item {
@@ -165,6 +212,10 @@
             transition: transform 0.3s, box-shadow 0.3s;
             background-color: rgba(40, 35, 70, 0.5);
             border: 1px solid #3a3560;
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            cursor: pointer; /* Добавляем курсор-указатель */
         }
 
         .reference-item:hover {
@@ -173,15 +224,25 @@
             border-color: #6a5acd;
         }
 
+        /* ИЗОБРАЖЕНИЯ С АДАПТИВНОЙ ВЫСОТОЙ */
+        .reference-image-container {
+            width: 100%;
+            overflow: hidden;
+        }
+
         .reference-item img {
             width: 100%;
-            height: 200px;
-            object-fit: cover;
+            height: auto;
             display: block;
+            object-fit: contain;
+            background-color: rgba(30, 27, 50, 0.3);
         }
 
         .reference-info {
             padding: 1.2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .reference-category {
@@ -204,21 +265,130 @@
             color: #c5b3ff;
             font-size: 0.9rem;
             line-height: 1.5;
+            margin-bottom: 1rem;
+            flex-grow: 1;
         }
 
-        .reference-tags {
+        /* Модальное окно для просмотра изображений */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: #7b68ee;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
             display: flex;
-            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: #6a5acd;
+            transform: scale(1.1);
+        }
+
+        .modal-info {
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            font-size: 1rem;
+            padding: 0.5rem;
+        }
+
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(123, 104, 238, 0.7);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            opacity: 0.7;
+        }
+
+        .modal-nav:hover {
+            background: #6a5acd;
+            opacity: 1;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .modal-prev {
+            left: 20px;
+        }
+
+        .modal-next {
+            right: 20px;
+        }
+
+        /* Кнопка просмотра на карточке */
+        .view-button {
+            display: inline-flex;
+            align-items: center;
             gap: 0.5rem;
             margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(106, 90, 205, 0.3);
+            color: #9d7cff;
+            border: 1px solid #6a5acd;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
         }
 
-        .reference-tag {
-            background: rgba(74, 69, 128, 0.3);
-            color: #b19cff;
-            padding: 0.2rem 0.6rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
+        .view-button:hover {
+            background: rgba(106, 90, 205, 0.5);
+            color: #fff;
         }
 
         .download-section {
@@ -245,10 +415,65 @@
             box-shadow: 0 7px 15px rgba(106, 90, 205, 0.4);
         }
 
+        /* Инструкция по скачиванию */
+        .download-instruction {
+            background: rgba(40, 35, 70, 0.6);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: left;
+            border-left: 4px solid #7b68ee;
+        }
+
+        .download-instruction h4 {
+            color: #c5b3ff;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .download-instruction ol {
+            padding-left: 1.5rem;
+            color: #d0c6ff;
+        }
+
+        .download-instruction li {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .download-instruction code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Подвал */
+        footer {
+            background-color: rgba(15, 12, 30, 0.95);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+            border-top: 2px solid #6a5acd;
+        }
+
+        .copyright {
+            color: #888;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
         /* Адаптивность */
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
             }
 
             .header h1 {
@@ -262,9 +487,27 @@
             .info-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .reference-item img {
+                max-height: 400px;
+            }
 
-            .reference-filters {
-                justify-content: center;
+            .modal-nav {
+                width: 35px;
+                height: 35px;
+                font-size: 1.2rem;
+            }
+
+            .modal-prev {
+                left: 10px;
+            }
+
+            .modal-next {
+                right: 10px;
+            }
+
+            .modal-image {
+                max-height: 70vh;
             }
         }
     </style>
@@ -273,193 +516,388 @@
     <!-- Фоновое изображение -->
     <div id="background-image"></div>
 
+    <!-- Модальное окно для просмотра изображений -->
+    <div id="imageModal" class="image-modal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <button class="modal-nav modal-prev">←</button>
+            <img class="modal-image" id="modalImage" src="" alt="">
+            <button class="modal-nav modal-next">→</button>
+            <div class="modal-info" id="modalInfo"></div>
+        </div>
+    </div>
+
+    <!-- Навигация -->
+    <nav>
+        <a href="index.html" class="logo">Ludekard</a>
+        <div class="nav-links">
+            <a href="index.html">Главная</a>
+            <div class="language-switcher">
+                <button class="language-btn active" data-lang="ru">Русский</button>
+                <button class="language-btn" data-lang="en">English</button>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
         <!-- Шапка -->
         <div class="header">
-            <h1>Референсы персонажей</h1>
-            <p>Здесь собраны все референсы моих персонажей для заказа арта. Используйте фильтры для навигации.</p>
-            <a href="index.html" class="back-button">← Вернуться на главную</a>
+            <h1 data-i18n="title">Референсы персонажей</h1>
+            <p data-i18n="subtitle">Здесь собраны все референсы моих персонажей для заказа арта. Используйте фильтры для навигации.</p>
+            <a href="index.html" class="back-button" data-i18n="back">← Вернуться на главную</a>
         </div>
+           <!-- Референс 3 -->
+            <div class="reference-item" data-index="2">
+                
+                <div class="reference-image-container">
+                    <img src="1refbelpe.png" alt="Details Reference" loading="lazy">
+                </div>
+                <div class="reference-info">
+                    <h4 data-i18n="items.color.title">Цветовая палитра</h4>
+                </div>
+            </div>
 
         <!-- Информация о персонаже -->
         <div class="character-info">
-            <h3>Лу'Нья (Lu'Nya)</h3>
-            <p>Главный OC персонаж, аликорн лунной магии с уникальной цветовой гаммой.</p>
+            <h3 data-i18n="character.title">Лу'Нья (Lu'Nya)</h3>
+            <p data-i18n="character.description">Главный OC персонаж, аликорн лунной магии с уникальной цветовой гаммой.</p>
             
             <div class="info-grid">
                 <div class="info-item">
-                    <h4>Вид</h4>
-                    <p>Аликорн (крылатый единорог)</p>
+                    <h4 data-i18n="character.species.title">Вид</h4>
+                    <p data-i18n="character.species.value">Аликорн (крылатый единорог)</p>
                 </div>
                 <div class="info-item">
-                    <h4>Основные цвета</h4>
-                    <p>Фиолетовый (#8A2BE2), Синий (#4169E1), Серебряный (#C0C0C0)</p>
+                    <h4 data-i18n="character.colors.title">Основные цвета</h4>
+                    <p data-i18n="character.colors.value">Фиолетовый (#8A2BE2), Синий (#4169E1), Серебряный (#C0C0C0)</p>
                 </div>
                 <div class="info-item">
-                    <h4>Особые приметы</h4>
-                    <p>Лунная грива, звёздные отметины, градиентные крылья</p>
+                    <h4 data-i18n="character.features.title">Особые приметы</h4>
+                    <p data-i18n="character.features.value">Лунная грива, звёздные отметины, градиентные крылья</p>
                 </div>
                 <div class="info-item">
-                    <h4>Характер</h4>
-                    <p>Спокойная, мечтательная, немного загадочная</p>
+                    <h4 data-i18n="character.personality.title">Характер</h4>
+                    <p data-i18n="character.personality.value">Спокойная, мечтательная, немного загадочная</p>
                 </div>
             </div>
-        </div>
-
-        <!-- Фильтры -->
-        <div class="reference-filters">
-            <button class="reference-filter-btn active" data-filter="all">Все</button>
-            <button class="reference-filter-btn" data-filter="fullbody">Фулбоди</button>
-            <button class="reference-filter-btn" data-filter="expressions">Эмоции</button>
-            <button class="reference-filter-btn" data-filter="details">Детали</button>
-            <button class="reference-filter-btn" data-filter="color">Цветовая схема</button>
         </div>
 
         <!-- Галерея референсов -->
         <div class="references-gallery" id="referencesGallery">
             <!-- Референс 1 -->
-            <div class="reference-item" data-category="fullbody color">
-                <img src="reference_fullbody.jpg" alt="Fullbody Reference" onerror="this.src='https://via.placeholder.com/300x200/8A2BE2/FFFFFF?text=Fullbody+Reference'">
+            <div class="reference-item" data-index="0">
+                <div class="reference-image-container">
+                    <img src="Bodypega.png" alt="Fullbody Reference" loading="lazy">
+                </div>
                 <div class="reference-info">
-                    <span class="reference-category">Фулбоди</span>
-                    <h4>Основная поза</h4>
-                    <p>Полный вид персонажа спереди с разметкой пропорций</p>
-                    <div class="reference-tags">
-                        <span class="reference-tag">пропорции</span>
-                        <span class="reference-tag">цвета</span>
-                        <span class="reference-tag">основная поза</span>
-                    </div>
+                    <span class="reference-category" data-i18n="items.fullbody.category">Фулбоди</span>
+                    <h4 data-i18n="items.fullbody.title">Основная поза</h4>
+                    <p data-i18n="items.fullbody.description">Полный вид персонажа спереди с разметкой пропорций</p>
                 </div>
             </div>
             
             <!-- Референс 2 -->
-            <div class="reference-item" data-category="expressions">
-                <img src="reference_expressions.jpg" alt="Expressions Reference" onerror="this.src='https://via.placeholder.com/300x200/4169E1/FFFFFF?text=Expressions'">
-                <div class="reference-info">
-                    <span class="reference-category">Эмоции</span>
-                    <h4>Набор эмоций</h4>
-                    <p>Основные выражения лица: радость, грусть, удивление, злость</p>
-                    <div class="reference-tags">
-                        <span class="reference-tag">лицо</span>
-                        <span class="reference-tag">эмоции</span>
-                        <span class="reference-tag">выражения</span>
-                    </div>
+            <div class="reference-item" data-index="1">
+                <div class="reference-image-container">
+                    <img src="goldmark.png" alt="cutiemark" loading="lazy">
                 </div>
-            </div>
-            
-            <!-- Референс 3 -->
-            <div class="reference-item" data-category="details">
-                <img src="reference_details.jpg" alt="Details Reference" onerror="this.src='https://via.placeholder.com/300x200/9370DB/FFFFFF?text=Details'">
                 <div class="reference-info">
-                    <span class="reference-category">Детали</span>
-                    <h4>Детализация</h4>
-                    <p>Крупные планы: грива, хвост, крылья, копыта</p>
-                    <div class="reference-tags">
-                        <span class="reference-tag">грива</span>
-                        <span class="reference-tag">крылья</span>
-                        <span class="reference-tag">детали</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Референс 4 -->
-            <div class="reference-item" data-category="color">
-                <img src="reference_color.jpg" alt="Color Reference" onerror="this.src='https://via.placeholder.com/300x200/6A5ACD/FFFFFF?text=Color+Scheme'">
-                <div class="reference-info">
-                    <span class="reference-category">Цвета</span>
-                    <h4>Цветовая палитра</h4>
-                    <p>Основные, дополнительные и акцентные цвета персонажа</p>
-                    <div class="reference-tags">
-                        <span class="reference-tag">палитра</span>
-                        <span class="reference-tag">градиенты</span>
-                        <span class="reference-tag">цвета</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Референс 5 -->
-            <div class="reference-item" data-category="fullbody">
-                <img src="reference_side.jpg" alt="Side View Reference" onerror="this.src='https://via.placeholder.com/300x200/483D8B/FFFFFF?text=Side+View'">
-                <div class="reference-info">
-                    <span class="reference-category">Фулбоди</span>
-                    <h4>Вид сбоку</h4>
-                    <p>Профиль персонажа с разметкой анатомических особенностей</p>
-                    <div class="reference-tags">
-                        <span class="reference-tag">профиль</span>
-                        <span class="reference-tag">анатомия</span>
-                        <span class="reference-tag">пропорции</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Референс 6 -->
-            <div class="reference-item" data-category="details">
-                <img src="reference_accessories.jpg" alt="Accessories Reference" onerror="this.src='https://via.placeholder.com/300x200/9400D3/FFFFFF?text=Accessories'">
-                <div class="reference-info">
-                    <span class="reference-category">Детали</span>
-                    <h4>Аксессуары</h4>
-                    <p>Варианты украшений и дополнительных элементов</p>
-                    <div class="reference-tags">
-                        <span class="reference-tag">украшения</span>
-                        <span class="reference-tag">аксессуары</span>
-                        <span class="reference-tag">детали</span>
-                    </div>
+                    <span class="reference-category" data-i18n="items.expressions.category">Голд'Ди</span>
+                    <h4 data-i18n="items.expressions.title">Кьютимарка</h4>
+                    <p data-i18n="items.expressions.description">Просто кьютимарка моей пегаски</p>
                 </div>
             </div>
         </div>
 
         <!-- Секция загрузки -->
         <div class="download-section">
-            <h3>Скачать все референсы одним архивом</h3>
-            <p style="margin: 1rem 0; color: #c5b3ff;">Архив содержит все изображения в высоком разрешении</p>
-            <a href="#" class="download-btn">Скачать ZIP архив (5MB)</a>
-            <p style="margin-top: 1rem; font-size: 0.9rem; color: #888;">
+            <h3 data-i18n="download.title">Скачать все референсы одним архивом</h3>
+            <p style="margin: 1rem 0; color: #c5b3ff;" data-i18n="download.subtitle">Архив содержит все изображения в высоком разрешении</p>
+            <!-- Замените href на реальную ссылку, когда у вас будет архив -->
+            <a href="Gold'De.zip" class="download-btn" data-i18n="download.button">Скачать ZIP архив (5MB)</a>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: #888;" data-i18n="download.note">
                 При заказе арта вы можете использовать эти референсы как основу для вашего персонажа
             </p>
         </div>
     </div>
 
+    <!-- Подвал -->
+    <footer>
+        <p class="logo" style="font-size: 1.8rem; margin-bottom: 1rem;">Ludekard</p>
+        <p data-i18n="footer.tagline">Цифровой художник | Фан-арт пони | Оригинальные персонажи</p>
+        <p class="copyright" data-i18n="footer.copyright">© 2025 Ludekard. Все права на изображения защищены.</p>
+    </footer>
+
     <script>
-        // Фильтрация референсов
+        // Переводы для страницы референсов
+        const translations = {
+            ru: {
+                // Общие
+                "title": "Референсы персонажей",
+                "subtitle": "Здесь собраны все референсы моих персонажей для заказа арта. Используйте фильтры для навигации.",
+                "back": "← Вернуться на главную",
+                
+                // Информация о персонаже
+                "character.title": "Голд'Ди",
+                "character.description": "Моя главная и любимая пегаска.",
+                "character.species.title": "Вид",
+                "character.species.value": "Пегас",
+                "character.colors.title": "Основные цвета",
+                "character.colors.value": "Белый мрамор с золотистыми прядями в гриве и тело цвета выпечки",
+                "character.features.title": "Особые приметы",
+                "character.features.value": "Колечко на правом ухе. Любит массаж крыльев и поглаживание верхней части тела.",
+                "character.personality.title": "Характер",
+                "character.personality.value": "· Мягкая, упрямая, стесняется внимания к себе. Обожает плюшевых акул и летучих мышей.",
+                "items.color.title": "Основной референс Голд",
+                
+                // Элементы референсов
+                "items.fullbody.category": "Фулбоди",
+                "items.fullbody.title": "референс",
+                "items.fullbody.description": "Просто смотрит на тебя",
+                
+                "items.expressions.category": "Кьютимарка",
+                "items.expressions.title": "Голд'Ди",
+                "items.expressions.description": "Просто кьютимарка моей пегаски",
+                
+                
+                // Кнопка просмотра
+                "view.button": "👁️ Просмотр",
+                
+                // Загрузка
+                "download.title": "Скачать все референсы одним архивом",
+                "download.subtitle": "Архив содержит все изображения в высоком разрешении",
+                "download.button": "Скачать ZIP архив (5MB)",
+                "download.note": "При заказе арта вы можете использовать эти референсы как основу для вашего персонажа",
+                
+                // Подвал
+                "footer.tagline": "Цифровой художник | Фан-арт пони | Оригинальные персонажи",
+                "footer.copyright": "© 2025 Ludekard. Все права на изображения защищены."
+            },
+            en: {
+                // General
+                "title": "Character References",
+                "subtitle": "Here are all references of my characters for ordering art. Use filters for navigation.",
+                "back": "← Back to Home",
+                
+                // Character info
+                "character.title": "Lu'Nya",
+                "character.description": "Main OC character, lunar magic alicorn with unique color scheme.",
+                "character.species.title": "Species",
+                "character.species.value": "Alicorn (winged unicorn)",
+                "character.colors.title": "Main Colors",
+                "character.colors.value": "Purple (#8A2BE2), Blue (#4169E1), Silver (#C0C0C0)",
+                "character.features.title": "Special Features",
+                "character.features.value": "Lunar mane, star markings, gradient wings",
+                "character.personality.title": "Personality",
+                "character.personality.value": "Calm, dreamy, slightly mysterious",
+                "items.color.title": "Gold'De main reference",
+                
+                // Reference items
+                "items.fullbody.category": "Fullbody",
+                "items.fullbody.title": "Reference",
+                "items.fullbody.description": "Just looking at you~",
+                
+                "items.expressions.category": "Cutiemark",
+                "items.expressions.title": "Gold'De",
+                "items.expressions.description": "Just Gold'De cutimark",
+                
+                
+                // View button
+                "view.button": "👁️ View",
+                
+                // Download
+                "download.title": "Download All References as Archive",
+                "download.subtitle": "Archive contains all images in high resolution",
+                "download.button": "Download ZIP Archive (5MB)",
+                "download.note": "When ordering art, you can use these references as a base for your character",
+                
+                // Footer
+                "footer.tagline": "Digital Artist | Pony Fan Art | Original Characters",
+                "footer.copyright": "© 2025 Ludekard. All image rights reserved."
+            }
+        };
+
+        // Функция смены языка
+        let currentLang = 'ru'; // Язык по умолчанию
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            
+            // Обновляем активную кнопку языка
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Обновляем все тексты с data-i18n атрибутом
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // Обновляем мета-теги страницы
+            document.documentElement.lang = lang;
+            document.title = translations[lang]["title"] + " | Ludekard";
+            
+            // Плавное изменение контента
+            document.body.style.opacity = '0.7';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+            
+            // Сохраняем выбор в localStorage
+            localStorage.setItem('preferredLanguage', lang);
+        }
+
+        // Система просмотра изображений
+        let currentImageIndex = 0;
+        const images = [];
+        const imageTitles = [];
+
+        // Функция для открытия модального окна с изображением
+        function openImageModal(index) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalInfo = document.getElementById('modalInfo');
+            
+            if (images[index]) {
+                modalImage.src = images[index];
+                modalInfo.textContent = imageTitles[index];
+                currentImageIndex = index;
+                modal.style.display = 'flex';
+                
+                // Блокируем прокрутку страницы
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // Функция для закрытия модального окна
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+            
+            // Восстанавливаем прокрутку страницы
+            document.body.style.overflow = 'auto';
+        }
+
+        // Функция для навигации по изображениям
+        function navigateImages(direction) {
+            let newIndex = currentImageIndex + direction;
+            
+            // Циклическая навигация
+            if (newIndex < 0) {
+                newIndex = images.length - 1;
+            } else if (newIndex >= images.length) {
+                newIndex = 0;
+            }
+            
+            openImageModal(newIndex);
+        }
+
+        // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
-            const filterButtons = document.querySelectorAll('.reference-filter-btn');
-            const referenceItems = document.querySelectorAll('.reference-item');
+            // Загружаем сохраненный язык или используем русский по умолчанию
+            const savedLang = localStorage.getItem('preferredLanguage') || 'ru';
+            changeLanguage(savedLang);
 
-            filterButtons.forEach(button => {
+            // Обработчики для кнопок переключения языка
+            document.querySelectorAll('.language-btn').forEach(button => {
                 button.addEventListener('click', () => {
-                    // Убираем активный класс у всех кнопок
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    // Добавляем активный класс текущей кнопке
-                    button.classList.add('active');
-
-                    const filterValue = button.getAttribute('data-filter');
-
-                    referenceItems.forEach(item => {
-                        const categories = item.getAttribute('data-category').split(' ');
-                        
-                        if (filterValue === 'all' || categories.includes(filterValue)) {
-                            item.style.display = 'block';
-                            setTimeout(() => {
-                                item.style.opacity = '1';
-                                item.style.transform = 'translateY(0)';
-                            }, 10);
-                        } else {
-                            item.style.opacity = '0';
-                            item.style.transform = 'translateY(20px)';
-                            setTimeout(() => {
-                                item.style.display = 'none';
-                            }, 300);
-                        }
-                    });
+                    const lang = button.getAttribute('data-lang');
+                    changeLanguage(lang);
                 });
             });
 
-            // Заглушка для скачивания
+            // Собираем все изображения для галереи
+            const referenceItems = document.querySelectorAll('.reference-item');
+            referenceItems.forEach((item, index) => {
+                const img = item.querySelector('img');
+                const title = item.querySelector('h4').textContent;
+                
+                if (img && img.src) {
+                    images[index] = img.src;
+                    imageTitles[index] = title;
+                    
+                    // Добавляем атрибут data-index для идентификации
+                    item.setAttribute('data-index', index);
+                    
+                    // Обработчик клика на карточку
+                    item.addEventListener('click', function(e) {
+                        // Проверяем, не кликнули ли на кнопку просмотра
+                        if (!e.target.closest('.view-button')) {
+                            const index = parseInt(this.getAttribute('data-index'));
+                            openImageModal(index);
+                        }
+                    });
+                    
+                    // Обработчик для кнопки просмотра
+                    const viewBtn = item.querySelector('.view-button');
+                    if (viewBtn) {
+                        viewBtn.addEventListener('click', function(e) {
+                            e.stopPropagation(); // Останавливаем всплытие
+                            const index = parseInt(item.getAttribute('data-index'));
+                            openImageModal(index);
+                        });
+                    }
+                }
+            });
+
+            // Обработчики для модального окна
+            const modal = document.getElementById('imageModal');
+            const modalClose = modal.querySelector('.modal-close');
+            const modalPrev = modal.querySelector('.modal-prev');
+            const modalNext = modal.querySelector('.modal-next');
+
+            modalClose.addEventListener('click', closeImageModal);
+            modalPrev.addEventListener('click', () => navigateImages(-1));
+            modalNext.addEventListener('click', () => navigateImages(1));
+
+            // Закрытие модального окна при клике вне изображения
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeImageModal();
+                }
+            });
+
+            // Навигация с помощью клавиатуры
+            document.addEventListener('keydown', function(e) {
+                if (modal.style.display === 'flex') {
+                    if (e.key === 'Escape') {
+                        closeImageModal();
+                    } else if (e.key === 'ArrowLeft') {
+                        navigateImages(-1);
+                    } else if (e.key === 'ArrowRight') {
+                        navigateImages(1);
+                    }
+                }
+            });
+
+            // Инструкция по скачиванию архива
             const downloadBtn = document.querySelector('.download-btn');
             downloadBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('Здесь будет ссылка для скачивания архива с референсами. Замените href на вашу реальную ссылку.');
+                if (this.getAttribute('href') === 'references.zip') {
+                    e.preventDefault();
+                    alert(currentLang === 'ru' 
+                        ? 'Для скачивания архива:\n\n1. Создайте ZIP архив с вашими референсами\n2. Загрузите его на хостинг\n3. Замените ссылку в коде на вашу реальную ссылку\n\nПример: <a href="ссылка_на_ваш_архив.zip">...</a>'
+                        : 'To enable archive download:\n\n1. Create a ZIP archive with your references\n2. Upload it to your hosting\n3. Replace the link in code with your actual link\n\nExample: <a href="your_archive_link.zip">...</a>'
+                    );
+                }
             });
+        });
+
+        // Если файл back.png не найден, показываем сообщение в консоли
+        window.addEventListener('load', () => {
+            const bg = document.getElementById('background-image');
+            const img = new Image();
+            img.src = 'back.png';
+            img.onerror = () => {
+                console.log('Файл back.png не найден. Пожалуйста, поместите файл с фоновым изображением в ту же папку, что и сайт.');
+                bg.style.backgroundImage = 'url("https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80")';
+            };
         });
     </script>
 </body>
